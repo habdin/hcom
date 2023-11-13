@@ -1,0 +1,23 @@
+* Hcom WORk units
+** Clinic
+** Laboratory
+** Radiology
+** Operating theatre
+** Ward
+** Paid service store
+*** Cafeteria
+*** Pharmacy
+*** Medical supply store
+** Rest room
+
+* HCOM service aspects
+** Electronic medical records management
+** Financial management
+** Administrative management
+** Non-EMR product management
+
+
+* Finish User management
+** TODO Finish CRUD operations
+** TODO Finish user login and logout screen
+** TODO Finish forgotten password management
