@@ -1,0 +1,7 @@
+{% load crispy_forms_tags %}
+
+
+<form method="POST" id="DummyForm">
+    {% csrf_token %}
+    <p class="alert alert-danger">Are you sure you want to delete {{object.name}}?</p>
+</form>
