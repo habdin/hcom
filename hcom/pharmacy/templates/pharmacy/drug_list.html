@@ -1,0 +1,146 @@
+{% extends 'hcom/base.html' %}
+{% load static %}
+
+{% block content %}
+<div class="d-flex">
+    <!-- List Title -->
+
+    <h2 class="display-5 mt-3 flex-grow-1">Drugs</h2>
+
+    <!-- Select list display type -->
+    <div class="btn-group mt-3 p-3" role="group">
+	<button type="button" title="View as Card" class="btn btn-primary" onclick="showAsCard()"><i class="fas fa-id-card"></i></button>
+	<button type="button" title="View as Table" class="btn btn-primary" onclick="showAsTable()"><i class="fas fa-table"></i></button>
+    </div>
+
+</div>
+<hr class="mb-3">
+
+<div class="d-flex">
+    <div class="flex-grow-1">
+	<button class="btn btn-primary mt-2 mb-3" title="Add Drug" data-bs-toggle="modal" data-bs-target="#theModal"><i class="fas fa-plus-square"></i></button>
+    </div>
+    <form class="form"><input class="form-control mt-2" placeholder="Search ..."/></form>
+</div>
+
+<!-- Option 1: Display as Card -->
+<div class="row mt-3" id="cardView">
+    {% for drug in drugs %}
+    <div class="col-sm-12 col-md-6">
+	<div class="card border-primary mb-3">
+	    <div class="card-body">
+		<h5 class="card-title"><a href={{ drug.id }} class="text-decoration-none">{{ drug.drug_name }}</a></h5>
+		<p class="card-text"><span class="text-muted mb-3">{{ drug.company }}</span></p>
+		<div class="row">
+		    <dt class="col-md-3 col-sm-6">Drug Name</dt>
+		    <dd class="col-md-9 col-sm-6">{{ drug.drug_name }}</dd>
+		    <dt class="col-md-3 col-sm-6">Drug Price</dt>
+		    <dd class="col-md-9 col-sm-6">{{ drug.drug_price }}</dd>
+		</div>
+		<hr>
+		<div class="btn-group" role="group">
+		    <a class="btn btn-sm btn-success" type="button" title="Edit drug {{ drug.drug_name }}" href="{{
+			      drug.id }}"><i class="fas fa-edit"></i></a>
+		    <a class="btn btn-sm btn-danger" type="button" title="Delete drug {{ drug.drug_name }}" href="{{
+			      drug.id }}"><i class="fas fa-trash"></i></a>
+		</div>
+	    </div>
+	</div>
+    </div>
+    {% endfor %}
+
+    <!-- Paginator location -->
+
+    {% if is_paginated %}
+    <div class="my-3">
+	<ul class="pagination justify-content-center">
+	    {% if page_obj.has_previous %}
+	    <li class="page-item"><a class="page-link" href="?page={{ page_obj.previous_page }}">Previous</a></li>
+	    {% endif %}
+
+	    {% for num in page_obj.paginator.page_range %}
+	    {% if page_obj.number == num %}
+	    <li class="page-item active"><a class="page-link" href="?page={{ num }}">{{ num }}</a></li>
+	    {% elif num > page_obj.number|add:'-3' and num < page_obj.number|add:'3' %}
+	    <li class="page-item"><a class="page-link" href="?page={{ num }}">{{ num }}</a></li>
+	    {% endif %}
+	    {% endfor %}
+
+	    {% if page_obj.has_next %}
+	    <li class="page-item"><a class="page-link" href="?page={{ page_obj.next_page_number }}">Next</a></li>
+	    {% endif %}
+	</ul>
+    </div>
+    {% endif %}
+</div>
+
+<!-- Option 2: Display as Table -->
+<table class="table table-bordered table-striped table-hover mt-3" id="tableView" style="display: none;">
+    <thead class="table-primary">
+	<tr>
+	    <th>ID</th>
+	    <th>Drug name</th>
+	    <th>Company</th>
+	    <th>Drug Dose</th>
+	    <th>Drug Unit</th>
+	    <th>Drug Form</th>
+	    <th>Drug Price</th>
+	    <th>Release Date</th>
+	    <th>Expiry Date</th>
+	    <th>Actions</th>
+	</tr>
+    </thead>
+    <tbody>
+	{% for drug in drugs %}
+	<tr>
+	    <td>{{ drug.id }}</td>
+	    <td><a href="{{ drug.id }}">{{ drug.drug_name }}</a></td>
+	    <td>{{ drug.company.name }}
+		<td>{{ drug.drug_dose}}</td>
+		<td>{{ drug.drug_unit }}</td>
+		<td>{{ drug.drug_form }}</td>
+		<td>{{ drug.drug_price }}</td>
+		<td>{{ drug.release_date }}</td>
+		<td>{{ drug.expiry_date }}</td>
+		<td>
+		    <div class="btn-group" role="group">
+			<a class="btn-sm btn-success" type="button" title="Edit drug {{ user.username }}" href="{{
+				  drug.id }}"><i class="fas fa-edit"></i></a>
+			<a class="btn-sm btn-danger" type="button" title="Delete drug {{ user.username }}" href="{{
+				  drug.id }}"><i class="fas fa-trash"></i></a>
+		    </div>
+		</td>
+	</tr>
+	{% endfor %}
+    </tbody>
+</table>
+
+<!-- Modal for CRUD operations -->
+<div class="modal fade" tabindex="-1" id="theModal" data-bs-backdrop="static">
+    <!-- The Modal is a dialog box which has a content consisting of header, body and footer
+	 The header can include a title + a close button,
+	 The body contains the main part of the modal.
+	 The footer include button that manipulate the content of the modal.
+    -->
+    <div class="modal-dialog">
+	<div class="modal-content">
+	    <div class="modal-header">
+		<h3 class="modal-title" id="theModalTitle"></h3>
+		<button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+	    </div>
+	    <div class="modal-body"></div>
+	    <div class="modal-footer">
+		<a href="#" class="btn btn-warning" data-dismiss="modal" id="theModalButtonCancel">
+		    Cancel
+		</a>
+		<input class="btn btn-primary" type="button" value="" id="theModalButtonSubmit" />
+
+	    </div>
+	</div>
+    </div>
+
+{% endblock content %}
+
+{% block scripts %}
+<script src="{% static 'js/pharmacy_ui_actions.js' %}"></script>
+{% endblock scripts %}
