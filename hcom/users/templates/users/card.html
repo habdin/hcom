@@ -1,0 +1,59 @@
+<!-- Model cards location -->
+
+{% for user in objects %}
+<div class="col-sm-12 col-md-6">
+  <div class="card border-primary mb-3">
+    <div class="card-body">
+      <h5 class="card-title">
+        <a href="#" class="text-decoration-none" onclick="ReadDataEntry({{ user.id }})">{{ user.username }}</a>
+      </h5>
+      {% if user.is_staff %}
+      <p class="card-text"><small class="text-muted">Administrator</small></p>
+      {% else %}
+      <p class="card-text"><small class="text-muted">Normal user</small></p>
+      {% endif %}
+      <div class="row">
+        <dt class="col-md-3 col-sm-6">Full Name</dt>
+        <dd class="col-md-9 col-sm-6">{{ user.first_name }} {{ user.last_name }}</dd>
+        <dt class="col-md-3 col-sm-6">Email</dt>
+        <dd class="col-md-9 col-sm-6">{{ user.email }}</dd>
+      </div>
+      <hr>
+      <div class="btn-group" role="group">
+        <a class="btn btn-sm btn-success" type="button" title="Edit User {{ user.username }}" href="#"
+          onclick="UpdateDataEntry({{ user.id }})"><i class="fas fa-edit"></i></a>
+        <a class="btn btn-sm btn-danger" type="button" title="Delete User {{ user.username }}" href="#"
+          onclick="DeleteDataEntry({{ user.id }})"><i class="fas fa-trash"></i></a>
+      </div>
+    </div>
+  </div>
+</div>
+{% empty %}
+<p class="alert alert-info">There are no users, please add one</p>
+{% endfor %}
+
+<!-- Paginator location -->
+
+{% if is_paginated %}
+<div class="my-3">
+  <ul class="pagination justify-content-center">
+    {% if page_obj.has_previous %}
+    <li class="page-item"><a class="page-link" href="?page={{ page_obj.previous_page_number }}">Previous</a></li>
+    {% endif %}
+
+    {% for num in page_obj.paginator.page_range %}
+    {% if page_obj.number == num %}
+    <li class="page-item active"><a class="page-link" href="?page={{ num }}">{{ num }}</a></li>
+    {% elif num > page_obj.number|add:'-3' and num < page_obj.number|add:'3' %} <li class="page-item"><a
+        class="page-link" href="?page={{ num }}">{{ num }}</a></li>
+      {% endif %}
+      {% endfor %}
+
+      {% if page_obj.has_next %}
+      <li class="page-item"><a class="page-link" href="?page={{ page_obj.next_page_number }}">Next</a></li>
+      {% endif %}
+  </ul>
+</div>
+{% endif %}
+
+<!-- End Paginator -->

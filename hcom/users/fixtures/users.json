@@ -1,0 +1,72 @@
+[
+	{
+		"model": "users.gender",
+		"pk": 1,
+		"fields": {
+			"gender": "male"
+		}
+	},
+	{
+		"model": "users.gender",
+		"pk": 2,
+		"fields": {
+			"gender": "female"
+		}
+	},
+	{
+		"model": "users.gender",
+		"pk": 3,
+		"fields": {
+			"gender": "unspecified"
+		}
+	},
+	{
+		"model": "users.city",
+		"pk": 1,
+		"fields": {
+			"city": "Cairo"
+		}
+	},
+	{
+		"model": "users.city",
+		"pk": 2,
+		"fields": {
+			"city": "Alexandria"
+		}
+	},
+	{
+		"model": "users.marital_status",
+		"pk": 1,
+		"fields": {
+			"marital_status": "single"
+		}
+	},
+	{
+		"model": "users.marital_status",
+		"pk": 2,
+		"fields": {
+			"marital_status": "married"
+		}
+	},
+	{
+		"model": "users.marital_status",
+		"pk": 3,
+		"fields": {
+			"marital_status": "divorced"
+		}
+	},
+	{
+		"model": "users.marital_status",
+		"pk": 4,
+		"fields": {
+			"marital_status": "widowed"
+		}
+	},
+	{
+		"model": "users.marital_status",
+		"pk": 5,
+		"fields": {
+			"marital_status": "unspecified"
+		}
+	}	
+]

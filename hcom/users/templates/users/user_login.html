@@ -1,0 +1,10 @@
+{% extends 'hcom/base.html' %}
+{% load crispy_forms_tags %}
+
+{% block content %}
+<form method="Post">
+  {% csrf_token %}
+  {{ form|crispy }}
+  <button type="Submit" class="btn btn-primary mt-3">Login</button>
+</form>
+{% endblock content %}

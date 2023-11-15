@@ -1,0 +1,52 @@
+{% load crispy_forms_tags %}
+
+<form method="GET" id="UserDeleteForm">
+  {% csrf_token %}
+  <h2 class="alert alert-danger">Are you sure you want to delete "{{ object.username }}"</h2>
+  <!-- <div class="row"> -->
+	 <!--  <dt class="col-md-3 col-sm-6">Id</dt> -->
+	 <!--  <dd class="col-md-9 col-sm-6">{{ user.id }}</dd> -->
+  <!---->
+	 <!--  <dt class="col-md-3 col-sm-6">Username</dt> -->
+	 <!--  <dd class="col-md-9 co-sm-6">{{ user.username }} -->
+  <!---->
+	 <!--  <dt class="col-md-3 col-sm-6">First Name</dt> -->
+	 <!--  <dd class="col-md-9 col-sm-6">{{ user.first_name }}</dd> -->
+  <!---->
+	 <!--  <dt class="col-md-3 col-sm-6">Last Name</dt> -->
+	 <!--  <dd class="col-md-9 co-sm-6">{{ user.last_name }}</dd> -->
+  <!---->
+	 <!--  <dt class="col-md-3 col-sm-6">Email</dt> -->
+	 <!--  <dd class="col-md-9 col-sm-6">{{ user.email }}</dd> -->
+  <!---->
+	 <!--  <dt class="col-md-3 col-sm-6">Administrator</dt> -->
+	 <!--  <dd class="col-md-9 co-sm-6">{{ user.is_staff }}</dd> -->
+  <!---->
+	 <!--  <dt class="col-md-3 col-sm-6">Active User</dt> -->
+	 <!--  <dd class="col-md-9 co-sm-6">{{ user.is_active }}</dd> -->
+  <!---->
+	 <!--  <dt class="col-md-3 col-sm-6">City</dt> -->
+	 <!--  <dd class="col-md-9 co-sm-6">{{ user.city }}</dd> -->
+  <!---->
+	 <!--  <dt class="col-md-3 col-sm-6">Id Number</dt> -->
+	 <!--  <dd class="col-md-9 co-sm-6">{{ user.id_number }}</dd> -->
+  <!---->
+	 <!--  <dt class="col-md-3 col-sm-6">Gender</dt> -->
+	 <!--  <dd class="col-md-9 co-sm-6"> -->
+		<!--   {% if user.gender == 'M' %} Male -->
+		<!--   {% elif user.gender == 'F' %} Female -->
+		<!--   {% else %} Unspecified -->
+		<!--   {% endif %} -->
+	 <!--  </dd> -->
+  <!---->
+	 <!--  <dt class="col-md-3 col-sm-6">Marital Status</dt> -->
+	 <!--  <dd class="col-md-9 co-sm-6"> -->
+		<!--   {% if user.marital_status == 'M' %} Married -->
+		<!--   {% elif user.marital_status == 'S' %} Single -->
+		<!--   {% elif user.marital_status == 'W' %} Widowed -->
+		<!--   {% elif user.marital_status == 'D' %} Divorced -->
+		<!--   {% else %} Unspecified -->
+		<!--   {% endif %} -->
+	 <!--  </dd> -->
+  <!-- </div> -->
+</form>

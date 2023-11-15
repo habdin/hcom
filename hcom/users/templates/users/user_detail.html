@@ -1,0 +1,46 @@
+<div class="row">
+	<dt class="col-md-3 col-sm-6">Id</dt>
+	<dd class="col-md-9 col-sm-6">{{ object.id }}</dd>
+
+	<dt class="col-md-3 col-sm-6">Username</dt>
+	<dd class="col-md-9 co-sm-6">{{ object.username }}
+
+	<dt class="col-md-3 col-sm-6">First Name</dt>
+	<dd class="col-md-9 col-sm-6">{{ object.first_name }}</dd>
+
+	<dt class="col-md-3 col-sm-6">Last Name</dt>
+	<dd class="col-md-9 co-sm-6">{{ object.last_name }}</dd>
+
+	<dt class="col-md-3 col-sm-6">Email</dt>
+	<dd class="col-md-9 col-sm-6">{{ object.email }}</dd>
+
+	<dt class="col-md-3 col-sm-6">Administrator</dt>
+	<dd class="col-md-9 co-sm-6">{{ object.is_staff }}</dd>
+
+	<dt class="col-md-3 col-sm-6">Active User</dt>
+	<dd class="col-md-9 co-sm-6">{{ object.is_active }}</dd>
+
+	<dt class="col-md-3 col-sm-6">City</dt>
+	<dd class="col-md-9 co-sm-6">{{ object.city }}</dd>
+
+	<dt class="col-md-3 col-sm-6">Id Number</dt>
+	<dd class="col-md-9 co-sm-6">{{ object.id_number }}</dd>
+
+	<dt class="col-md-3 col-sm-6">Gender</dt>
+	<dd class="col-md-9 co-sm-6">
+		{% if object.gender == 'M' %} Male
+		{% elif object.gender == 'F' %} Female
+		{% else %} Unspecified
+		{% endif %}
+	</dd>
+
+	<dt class="col-md-3 col-sm-6">Marital Status</dt>
+	<dd class="col-md-9 co-sm-6">
+		{% if object.marital_status == 'M' %} Married
+		{% elif object.marital_status == 'S' %} Single
+		{% elif object.marital_status == 'W' %} Widowed
+		{% elif object.marital_status == 'D' %} Divorced
+		{% else %} Unspecified
+		{% endif %}
+	</dd>
+</div>
