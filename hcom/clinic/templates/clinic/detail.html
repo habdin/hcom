@@ -1,0 +1,12 @@
+{% extends "hcom/base.html" %}
+{% block content %}
+<h2 class="display-3 mb-3">{{ clinic.physician }}'s Clinic</h2>
+<hr>
+{% if patient_list|length > 0 and appointment_list|length == 0 %}
+{% for patient in patient_list %}
+<p>Patient {{ patient.first_name }} {{ patient.last_name }} is waiting for an appointment.</p>
+{% endfor %}
+{% else %}
+{% endif %}
+<a class="btn btn-primary" href="#"><i class="fas fa-plus me-2" onclick="Add_Appointment"></i>New Appointment</a>
+{% endblock content %}

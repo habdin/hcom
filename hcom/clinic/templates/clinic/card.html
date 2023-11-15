@@ -1,0 +1,55 @@
+<div class="row mt-3" id="cardView">
+    {% for clinic in clinics %}
+    <div class="col-md-6 col-sm-12">
+        <div class="card border-primary p-3 mb-3">
+            <div class="row">
+                <div class="col-md-3">
+                    <img class="rounded-start" width="120px" height="120px" src="{{ clinic.physician.image.url }}" alt="My Image">
+                </div>
+                <div class="col-md-9">
+                    <div class="card-body">
+                        <h5 class="card-title">Dr. <a href="{{ clinic.id }}" class="text-decoration-none">{{ clinic.physician }}'s clinic</a></h5>
+                        <p class="card-text"><small class="text-muted">{{ clinic.physician.speciality }}</small></p>
+                        <p class="card-text">The clinic's working hours start from {{ clinic.opening_time }} till {{ clinic.closing_time }}</p>
+                    </div>
+                </div>
+            </div>
+            <hr>
+            <div class="row">
+                <div class="col-10">
+                    <a href="{{ clinic.id }}" class="btn btn-primary mt-3">Go To Clinic</a>
+                </div>
+                <div class="col-2">
+                </div>
+            </div>
+        </div>
+    </div>
+
+    {% empty %}
+    <p class="alert-info">There are no clinics, please add one.
+        {% endfor %}
+
+        <!-- Paginator location -->
+
+        {% if is_paginated %}
+        <div class="my-3">
+            <ul class="pagination justify-content-center">
+                {% if page_obj.has_previous %}
+                <li class="page-item"><a class="page-link" href="?page={{ page_obj.previous_page }}">Previous</a></li>
+                {% endif %}
+
+                {% for num in page_obj.paginator.page_range %}
+                {% if page_obj.number == num %}
+                <li class="page-item active"><a class="page-link" href="?page={{ num }}">{{ num }}</a></li>
+                {% elif num > page_obj.number|add:'-3' and num < page_obj.number|add:'3' %}
+                <li class="page-item"><a class="page-link" href="?page={{ num }}">{{ num }}</a></li>
+                {% endif %}
+                {% endfor %}
+
+                {% if page_obj.has_next %}
+                <li class="page-item"><a class="page-link" href="?page={{ page_obj.next_page_number }}">Next</a></li>
+                {% endif %}
+            </ul>
+        </div>
+        {% endif %}
+</div>
