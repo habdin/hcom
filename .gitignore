@@ -1,0 +1,9 @@
+venv/
+.idea/
+.vim/
+.vscode
+**/__pycache__/
+**/*.pyc
+**/bin/
+**/obj/
+**/wwwroot/lib/
