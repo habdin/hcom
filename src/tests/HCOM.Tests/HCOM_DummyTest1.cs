@@ -10,7 +10,7 @@ public class TestContextUnitTests
     private TestContext GetInMemoryContext()
     {
         var options = new DbContextOptionsBuilder<TestContext>()
-            .UseInMemoryDatabase("TestDb")
+            .UseInMemoryDatabase(Guid.NewGuid().ToString())
             .Options;
 
         var context = new TestContext(options);
