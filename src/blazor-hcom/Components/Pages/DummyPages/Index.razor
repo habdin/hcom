@@ -1,0 +1,58 @@
+@*
+    Index.razor - Main entry point for listing and managing Dummy entities.
+
+    Features:
+    - Interface toggling (Card/Table)
+    - Searching functionality
+    - Data loading from EF Core context
+    - Placeholder methods for CRUD modal interaction
+
+    To be implemented:
+	- Sorting functionality for Table Interface.
+	- Paging functionality for data
+    - Modal display logic
+*@
+
+@page "/dummies"
+@using Microsoft.EntityFrameworkCore
+@using blazor_hcom.Models
+
+@namespace blazor_hcom.Components.Pages.DummyPages
+
+<PageTitle>Index</PageTitle>
+
+<div class="d-flex pt-5">
+	<h2 class="display-5 flex-grow-1 mt-4">List of Dummies</h2>
+	<Toolbar
+		ViewToggled="@HandleToggleView"
+		SearchString="@SearchHandler"
+		OnAddNew="HandleCreate"
+	/>
+</div>
+<hr class="mb-3">
+
+<!-- DELETE: When Modal and CRUDForm are ready and functional. -->
+<!-- <p>
+     <a href="dummies/create">Create New</a>
+	 </p>-->
+<!-- END OF DELETE -->
+
+<DataDisplay TEntity="Dummy"
+		Items="@Items"
+		IsLoading="@IsLoading"
+		IsTable="@ViewAsTable"
+		OnUpdateRecord="HandleUpdate"
+		OnDeleteRecord="HandleDelete"
+		OnDetailsRecord="HandleRead"
+/>
+
+
+<Modal TEntity="Dummy"
+       Item="@Item"
+	   Title="@ModalTitle"
+	   Operation="@CrudOperation"
+	   ButtonSubmitText="@ModalSubmitBtnText"
+       MainFormContent="@(MainForm(CrudOperation))"
+       OnSubmit="(() => HandleSubmit(Item, CrudOperation))"
+/>
+

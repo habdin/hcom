@@ -1,0 +1,81 @@
+@*
+	This Toolbar component will be used in the Head of Various modules.
+	It includes the following buttons:
+	1. New record Button.
+	2. Text search field.
+	3. Pagination amount dropdown.
+	4. Cardview/Tableview buttons.
+*@
+
+<!-- The padding is set to let the whole toolbar to be sticked to the end of the container element with proper padding from top and bottom -->
+<div class="btn-group mt-3 pt-3 pb-2">
+	<!-- 1. New Record Button -->
+	<button class="btn btn-primary p-3 shadow-sm" title="Add New Record" 
+	        id="AddRecordBtn" @onclick="HandleNewBtnClicked">
+		<i class="fas fa-plus-square"></i>
+	</button>
+	
+	<!-- 2. Text Search Field -->
+	<input name="search" id="dataSearchField" 
+	       class="form-control p-3 shadow-sm" placeholder="Search ..." 
+	       type="search" @oninput="HandleSearch"/>
+	
+	<!-- 3. Pagination size -->
+	<select id="items_amount_select" class="form-select-sm shadow-sm" 
+	        title="Amount of Entries displayed" @onchange="HandlePageAmountChanged">
+		<option value="10">10</option>
+		<option value="25">25</option>
+		<option value="50">50</option>
+		<option value="100">100</option>
+	</select>
+	
+	<!-- 4. CardView Button -->
+	<button class="btn btn-primary shadow-sm p-3" 
+	   title="View as Cards" @onclick="() => SetTableView(false)">
+		<i class="fas fa-id-card"></i>
+	</button>
+	
+	<!-- 5. TableView Button -->
+	<button class="btn btn-primary shadow-sm p-3" 
+	   title="View as Table" @onclick="() => SetTableView(true)">
+		<i class="fas fa-table"></i>
+	</button>
+</div>
+
+@code { 
+	// Code to handle new button
+	[Parameter]
+    public EventCallback OnAddNew { get; set; }
+	private async Task HandleNewBtnClicked()
+	{
+		await OnAddNew.InvokeAsync();
+	}
+
+	// Code for the TextField searching
+	[Parameter]
+	public EventCallback<string> SearchString { get; set; } 
+	private async Task HandleSearch(ChangeEventArgs e)
+	{
+		await SearchString.InvokeAsync(e.Value?.ToString());
+	}
+	
+	// Code for Paginator Amount Selector
+	[Parameter]
+    public EventCallback<int> PageAmount { get; set; }
+	private async Task HandlePageAmountChanged(ChangeEventArgs e)
+	{
+		if (int.TryParse(e.Value?.ToString(), out var size))
+		{
+			await PageAmount.InvokeAsync(size);
+		}
+	}
+	
+	// Code for Interface switching buttons
+	[Parameter]
+    public EventCallback<bool> ViewToggled { get; set; }
+
+	private async Task SetTableView(bool table)
+	{
+		await ViewToggled.InvokeAsync(table);
+	}
+}

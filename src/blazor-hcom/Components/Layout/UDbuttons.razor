@@ -1,0 +1,31 @@
+@typeparam TEntity
+
+<div class="btn-group shadow" role="group">
+	<button class="btn btn-sm btn-success"
+			type="button"
+			title="Edit @Title"
+			@onclick="() => OnEdit.InvokeAsync(Item)">
+		<i class="fas fa-edit"></i>
+	</button>
+	<button class="btn btn-sm btn-danger"
+			type="button"
+			title="Delete @Title"
+			@onclick="() => OnDelete.InvokeAsync(Item)">
+		<i class="fas fa-trash"></i>
+	</button>
+</div>
+
+@code {
+
+	[Parameter]
+	public TEntity Item { get; set; } = default!;
+
+	[Parameter]
+	public string? Title { get; set; } = string.Empty;
+
+	[Parameter]
+	public EventCallback<TEntity> OnEdit { get; set; }
+
+	[Parameter]
+	public EventCallback<TEntity> OnDelete { get; set; }
+}

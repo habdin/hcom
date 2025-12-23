@@ -1,23 +1,59 @@
 ﻿@inherits LayoutComponentBase
+@using System.Linq
+@inject IMessageService NotifySrvs
+@using blazor_hcom.Classes
 
-<div class="page">
-    <div class="sidebar">
-        <NavMenu />
-    </div>
+<HeadContent>
+	<title>@FullTitle</title>
+</HeadContent>
 
-    <main>
-        <div class="top-row px-4">
-            <a href="https://learn.microsoft.com/aspnet/core/" target="_blank">About</a>
-        </div>
+<NavMenu />
 
+<div class="toast-container position-fixed top-0 end-0 mt-5 p-3" id="toast-container">
+	 @foreach (var msg in Messages.TakeLast(1))
+	 { <Toast Message="msg" /> }
+	 </div>
+
+<div class="container">
+	<main>
         <article class="content px-4">
             @Body
         </article>
     </main>
 </div>
 
-<div id="blazor-error-ui" data-nosnippet>
-    An unhandled error has occurred.
-    <a href="." class="reload">Reload</a>
-    <span class="dismiss">🗙</span>
-</div>
+<footer class="bg-primary text-light p-3 fixed-bottom">
+    <div class="container-fluid">
+        <a href="" class="nav-link">HCOM</a>
+    </div>
+</footer>
+
+@code {
+    [CascadingParameter] 
+    public string? Title { get; set; }
+
+	private string FullTitle =>
+		string.IsNullOrWhiteSpace(Title)
+		? "HCOM" 
+        : $"{Title} - HCOM";
+
+	@* Expose messages from the NotificationService *@
+	private IReadOnlyList<AppMessage> Messages => NotifySrvs.Messages;
+
+	@* Subscribe to the NotificationService on Component Initialization *@
+	protected override void OnInitialized()
+	{
+		NotifySrvs.OnMessageAdded += Notify;
+	}
+
+	private async Task Notify(AppMessage message){
+		await InvokeAsync(StateHasChanged);
+	} 
+	
+	@* Unsubscribe from NotificationService on component disposal
+	   (required to be public due to IDisposable) *@
+	public void Dispose()
+	{
+		NotifySrvs.OnMessageAdded -= Notify;
+	}
+}

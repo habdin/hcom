@@ -1,0 +1,229 @@
+@* 
+    DataDisplay.razor - Generic UI component to display TEntity items in table or card view.
+
+    Features:
+    - Supports both table and card interfaces for displaying items.
+    - Automatically reflects over TEntity to render properties.
+    - Emits EventCallbacks for Edit, Delete, and Details actions.
+    - Dynamically generates action buttons via the reusable UDButtons component.
+
+    Parameters:
+    - TEntity: The model type for the items being displayed.
+    - Items: The list of entities to display.
+    - IsTable: Toggles between table and card layout modes.
+    - OnUpdateRecord / OnDeleteRecord / OnDetailsRecord: Callbacks triggered when action buttons are clicked.
+
+    Notes:
+    - Action buttons are connected via EventCallback<T> to allow parent components to control modal behavior.
+    - Uses System.Reflection to access properties dynamically.
+
+    To improve later:
+    - Add support for paging and sorting.
+    - Allow specifying which columns to display explicitly.
+    - Add template support for custom rendering of properties.
+*@
+
+@using System.Reflection
+@typeparam TEntity
+
+@if (IsLoading)
+{
+    <p><em>Loading...</em></p>
+}
+
+else if (Items is null || !Items.Any())
+{
+	<p class="alert alert-info">
+		There are no records. Please add one.
+	</p>
+}
+
+else
+{
+	@if (IsTable)
+	{
+	@*
+	   Table Layout for displaying TEntity items 
+
+	   Briefly the layout has the following flow:
+	   1- Display items in table view when data items exist.
+	   2- Or Display a data warning message that there no items exist, prompting the user to add
+	   some data.
+	*@	
+		<table class="table table-hover table-striped">
+			<thead class="table-primary">
+				<tr>
+					@foreach (var prop in typeof(TEntity).GetProperties() )
+					{
+						@if(prop.Name.ToLower() == "id")
+						{ continue; }
+						<th>@prop.Name</th> 
+					}
+					<th>Actions</th>
+				</tr>
+			</thead>
+			<tbody>
+				@foreach (var item in Items!)
+				{
+					<tr>
+						@foreach (var prop in typeof(TEntity).GetProperties())
+						{
+							@if (prop.Name.ToLower() == "id")
+							{
+								continue;
+							}
+
+							<td>
+								@if (prop.Name.ToLower() == "name")
+								{
+									<a class="text-decoration-none" 
+										role="link" style="cursor: pointer;"
+										title="@GetTitle(item!)'s Details"
+										@onclick="() => HandleDetailsBtnClicked(item!)">
+										@GetTitle(item!)
+									</a>
+								}
+								else 
+								@GetValue(item!, prop)
+							</td>
+						}
+						<td>
+							<UDbuttons
+								TEntity = "TEntity"
+								Item = "@( (TEntity) item)"
+								Title = "@($"{EntityName} {GetTitle(item!)}")"
+								OnEdit = "@( (TEntity item) => HandleUpdateBtnClicked(item!))"
+								OnDelete="@( (TEntity item) => HandleDeleteBtnClicked(item!))"
+								/>
+						</td>
+					</tr>
+				}
+			</tbody>
+		</table>
+
+	}
+	else
+	{
+	@*
+	   Card Layout for displaying TEntity items 
+
+	   Briefly the layout has the following flow:
+	   1- Display items as cards when data items exist.
+	   2- Or Display a data warning message that there no items exist, prompting the user to add
+	   some data.
+	*@	
+		<div class="row mt-3" id="cardView">
+			@foreach (var item in Items!)
+			{
+				<div class="col-md-6 col-sm-12">
+					<div class="card mb-3 shadow-sm">
+						<div class="card-header">
+							<h5 class="card-title text-decoration-none">
+								<a class="text-decoration-none" 
+								role="link" style="cursor: pointer;"
+								title="@GetTitle(item!)'s Details"
+								@onclick="() => HandleDetailsBtnClicked(item!)">
+									@GetTitle(item!)
+								</a>
+							</h5>
+						</div>
+						<div class="card-body">
+							<div class="row">
+								@foreach (var prop in typeof(TEntity).GetProperties())
+								{
+								if (prop.Name.ToLower() == "id")
+								{ continue; }
+								<dt class="col-4">@prop.Name</dt>
+								<dd class="col-8">@GetValue(item!, prop)</dd>
+								}
+							</div>
+							<!-- <input type="hidden" name="Id" value="@GetIdValue(item!)"> -->
+						</div>
+						<div class="card-footer">
+							<UDbuttons
+								TEntity="TEntity"
+								Item = "@( (TEntity) item)"
+								Title = "@($"{EntityName} {GetTitle(item!)}")"
+								OnEdit = "@( (TEntity item) => HandleUpdateBtnClicked(item!))"
+								OnDelete="@( (TEntity item) => HandleDeleteBtnClicked(item!))"
+								/>
+						</div>
+					</div>
+				</div>
+				}
+		</div>
+	}
+}
+
+@code
+{
+	/// <summary>
+    /// The name of the entity type, used in titles and tooltips.
+    /// </summary>
+	private string EntityName = typeof(TEntity).Name;
+	
+	/// <summary>
+    /// Helper to extract a value from a given property using reflection.
+    /// </summary>
+	private object? GetValue(object item, PropertyInfo prop)
+    {
+        return prop.GetValue(item);
+    }
+
+	/// <summary>
+    /// Gets the "Name" property of an entity for use in UI titles.
+    /// Returns "Untitled" if not found or null.
+    /// </summary>
+    private string GetTitle(object item)
+    {
+        var nameProp = typeof(TEntity).GetProperty("Name");
+        return nameProp?.GetValue(item)?.ToString() ?? "Untitled";
+    }
+
+	/// <summary>
+	/// Shows Loading when data are remotely being loaded.
+	/// </summary>
+	[Parameter]
+	public bool IsLoading { get; set; }
+
+	/// <summary>
+    /// Determines if data is rendered as a table or cards.
+    /// </summary>
+	[Parameter]
+	public bool IsTable { get; set; } = false;
+
+	/// <summary>
+    /// The name of the entity type, used in titles and tooltips.
+    /// </summary>
+	[Parameter]
+	public List<TEntity> Items { get; set; } = new();
+
+	/// <summary>
+    /// Event callback for handling edit button.
+    /// </summary>	
+	[Parameter]
+	public EventCallback<TEntity> OnUpdateRecord { get; set; }
+	private async Task HandleUpdateBtnClicked(TEntity item)
+	{
+		await OnUpdateRecord.InvokeAsync(item);
+	}
+
+	/// <summary>
+    /// Event callback for handling delete button.
+    /// </summary>
+	[Parameter]
+	public EventCallback<TEntity> OnDeleteRecord { get; set;}
+	private async Task HandleDeleteBtnClicked(TEntity item)
+	{
+		await OnDeleteRecord.InvokeAsync(item);
+	}
+
+	/// <summary>
+    /// Event callback for handling details link.
+    /// </summary>
+	[Parameter]
+	public EventCallback<TEntity> OnDetailsRecord { get; set; }
+	private async Task HandleDetailsBtnClicked(TEntity item) {
+		await OnDetailsRecord.InvokeAsync(item);
+	}
+}

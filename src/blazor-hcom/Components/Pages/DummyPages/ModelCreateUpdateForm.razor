@@ -1,0 +1,48 @@
+@* 
+[HCOM-DESIGN NOTE]
+Component: ModelCreateUpdateForm.razor
+
+Purpose:
+- Renders the editable fields for the Dummy entity.
+- Handles validation display only (no CRUD logic, no modal control).
+
+Parameters:
+- [Parameter] public Dummy? Dummy { get; set; }
+    → Receives the entity instance for form binding.
+      In 'create' mode, this is a new Dummy().
+      In 'update' mode, this is an existing Dummy with values preloaded.
+      Rationale: The form is model-agnostic; it simply binds what it receives.
+
+- [Parameter] public string? Operation { get; set; }
+   → Provides context (create/update/read/etc.) for conditional UI or validation behavior.     Important even though form does not perform CRUD itself.
+
+SOC Enforcement:
+- Form = View-only logic (fields + validation)
+- Index = Controller logic (modal state, CRUD dispatch)
+- Modal = Presentation wrapper (UI shell for forms), responsible for form submission.
+*@
+
+@using blazor_hcom.Models
+
+@namespace blazor_hcom.Components.Pages.DummyPages
+
+<EditForm EditContext="@EditContext">
+	<DataAnnotationsValidator />
+	<ValidationSummary class="text-danger" role="alert"/>
+	<div class="mb-3">
+		<label for="name" class="form-label">Name</label> 
+		<InputText id="name" @bind-Value="Dummy!.Name" class="form-control" aria-required="true"/> 
+		<ValidationMessage For="() => Dummy.Name" class="text-danger" /> 
+	</div>        
+	<div class="mb-3">
+		<label for="category" class="form-label">Category</label> 
+		<InputText id="category" @bind-Value="Dummy!.Category" class="form-control" /> 
+		<ValidationMessage For="() => Dummy.Category" class="text-danger" /> 
+	</div>        
+</EditForm>
+
+@code {
+	[Parameter] public Dummy? Dummy { get; set; }
+	[Parameter] public string? Operation { get; set; }
+	[Parameter] public EditContext? EditContext { get; set; }
+}
