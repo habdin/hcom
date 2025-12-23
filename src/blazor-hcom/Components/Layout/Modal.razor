@@ -1,0 +1,53 @@
+@* Generic boostrap-styled Modal that wraps CRUDForm component *@
+@* REMOVED commented unnecessary code and relevant comments.
+Switch from c# conditional if statement to JS visibility and hiding
+the former was not found to be functioning.*@
+
+@typeparam TEntity
+@using blazor_hcom.Models
+
+	<div class="modal fade" tabindex="-1" id="theModal" data-bs-backdrop="static">
+		<div class="modal-dialog modal-xl">
+			<div class="modal-content">
+				<div class="modal-header">
+					@if (Item != null)
+					{<h3 class="modal-title" id="theModalTitle">@Title</h3>}
+					<button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+				</div>
+				<div class="modal-body" id="theModalBody">
+					@if (Stage == ModalStage.MainForm) {
+						@MainFormContent
+					}
+					else if (Stage == ModalStage.DependentForm) {
+						@DependentFormContent
+					}
+				</div>
+				<div class="modal-footer">
+					@if (Operation != "read")
+					{
+						<button class="btn btn-secondary" data-bs-dismiss="modal" id="theModalButtoneCancel">Cancel</button>
+					}
+					<button class="btn btn-primary" type="button" 
+					        @onclick="OnSubmit" id="theModalButtonSubmit">@ButtonSubmitText</button>
+				</div>
+			</div>
+		</div>
+	</div>
+
+@code {
+	public enum ModalStage {
+		MainForm,
+		DependentForm
+	}
+
+	[Parameter] public TEntity? Item { get; set; }
+	[Parameter] public string? Operation { get; set; }
+	[Parameter] public string? Title { get; set; }
+	[Parameter] public ModalStage Stage { get; set; }
+	[Parameter] public RenderFragment? MainFormContent { get; set; }
+	[Parameter] public RenderFragment? DependentFormContent { get; set; }
+	[Parameter] public string? ButtonSubmitText { get; set; }
+	[Parameter] public EventCallback OnSubmit { get; set; }
+	// These receive relevant information from the ancestor Index component.
+	[Parameter] public TestContext? Context { get; set; }
+}
