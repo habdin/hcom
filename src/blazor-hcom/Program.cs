@@ -11,6 +11,7 @@ builder.Services.AddQuickGridEntityFrameworkAdapter();
 builder.Services.AddDatabaseDeveloperPageExceptionFilter();
 
 builder.Services.AddScoped<IMessageService, NotificationService>();
+builder.Services.AddScoped<UiStateService>();
 
 // Add services to the container.
 builder.Services.AddRazorComponents()

@@ -1,23 +1,39 @@
 using Microsoft.EntityFrameworkCore;
 using Microsoft.AspNetCore.Components.Forms;
 using Microsoft.AspNetCore.Components;
-using Microsoft.JSInterop;
 using blazor_hcom.Models;
-using blazor_hcom.Services;
 using blazor_hcom.Classes;
-
+using blazor_hcom.Components.Layout;
 
 namespace blazor_hcom.Components.Pages.DummyPages;
 
 public partial class Index : ComponentBase, IAsyncDisposable
 {
-	// Modal Related properties that used to tweak the <Modal />
-	private string CrudOperation { get; set; } = "";
+    // Modal Related properties that used to tweak the <Modal />
+    private Modal<Dummy>? _myModalRef;
+    private string CrudOperation { get; set; } = "";
 	private string ModalSubmitBtnText { get; set; } = "Save";
 	private string ModalTitle { get; set; } = "";
 
-	// Modal methods
-	private RenderFragment MainForm (string operation) => operation switch
+    // Modal methods
+	private async Task HandleBackdropClick() {
+        await _myModalRef!.Hide();
+    }
+
+	private void HandleModalVisibility (bool visible)
+	{
+		// Since the modal catches the state of modal visibility which
+		// is changed via calling a method to show the modal and that
+		// internally changes the OnVisibilityChanged.
+		// The Role of the method is to catch this state change and change
+		// the service state. This will be used to toggle the
+		// overflow:hidden state in the body tag in App.razor
+        UiStateSrvs.ModalOpen = visible;
+    }
+    private async Task ModalShowAsync() => await _myModalRef!.Show();
+
+    private async Task ModalHideAsync() => await _myModalRef!.Hide();
+    private RenderFragment MainForm (string operation) => operation switch
 	{
 		"create" or "update" => builder =>
 		{
@@ -154,10 +170,11 @@ private async Task HandleSubmit (Dummy item, string? operation)
 		{
 			if (shouldClose)
 			{
+                await ModalHideAsync();
 				await LoadItemsAsync();
-                var lastMessage = NotifySrvs.Messages.Last();
-                var ToastId = $"toast{lastMessage.Id}";
-                await JS.InvokeVoidAsync("finalizeSubmit", "theModal", ToastId);
+                // var lastMessage = NotifySrvs.Messages.Last();
+                // var ToastId = $"toast{lastMessage.Id}";
+                // await JS.InvokeVoidAsync("finalizeSubmit", "theModal", ToastId);
                 Logger.LogInformation("Modal closed after successful operation.");
 			}
 			else

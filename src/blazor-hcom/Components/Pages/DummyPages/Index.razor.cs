@@ -1,10 +1,8 @@
 using Microsoft.EntityFrameworkCore;
 using Microsoft.AspNetCore.Components.Forms;
 using Microsoft.AspNetCore.Components;
-using Microsoft.JSInterop;
 using blazor_hcom.Models;
 using blazor_hcom.Services;
-using blazor_hcom.Classes;
 
 
 namespace blazor_hcom.Components.Pages.DummyPages;
@@ -15,9 +13,9 @@ public partial class Index : ComponentBase, IAsyncDisposable
 
     [Inject] IDbContextFactory<TestContext> DbFactory { get; set; } = default!;
     [Inject] IHostEnvironment Env { get; set; } = default!;
-    [Inject] IJSRuntime JS { get; set; } = default!;
 	[Inject] private ILogger<Index> Logger { get; set; } = default!;
     [Inject] IMessageService NotifySrvs { get; set; } = default!;
+    [Inject] UiStateService UiStateSrvs { get; set; } = default!;
 
     private TestContext context = default!;
     private EditContext? editcontext = default!;
@@ -28,9 +26,7 @@ public partial class Index : ComponentBase, IAsyncDisposable
 
 	// Created as public since it will be used elsewhere in the project
     public Dummy Item { get; set; } = new Dummy();
-
-
-    // ===== End of Fields and Properties Section ===== //
+	// ===== End of Fields and Properties Section ===== //
 
     // ===== Methods Section ===== //
 
@@ -51,8 +47,9 @@ public partial class Index : ComponentBase, IAsyncDisposable
     }
 
 	// JS-based helper methods used to open/close Modal.
-	private async Task ShowModalAsync() => await JS.InvokeVoidAsync("showModal", "theModal");
-	private async Task HideModalAsync() => await JS.InvokeVoidAsync("hideModal", "theModal");
+	// private async Task ShowModalAsync() => await JS.InvokeVoidAsync("showModal", "theModal");
+
+	// private async Task HideModalAsync() => await JS.InvokeVoidAsync("hideModal", "theModal");
 
 	
 	// -------- End of Helper methods subsection -------- //

@@ -50,7 +50,7 @@ else
 	   2- Or Display a data warning message that there no items exist, prompting the user to add
 	   some data.
 	*@	
-		<table class="table table-hover table-striped">
+		<table class="table table-hover table-striped my-3 py-3">
 			<thead class="table-primary">
 				<tr>
 					@foreach (var prop in typeof(TEntity).GetProperties() )
@@ -112,7 +112,7 @@ else
 	   2- Or Display a data warning message that there no items exist, prompting the user to add
 	   some data.
 	*@	
-		<div class="row mt-3" id="cardView">
+		<div class="row my-3 py-3" id="cardView">
 			@foreach (var item in Items!)
 			{
 				<div class="col-md-6 col-sm-12">

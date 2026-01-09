@@ -1,22 +1,30 @@
-﻿@inherits LayoutComponentBase
+@inherits LayoutComponentBase
 @using System.Linq
 @inject IMessageService NotifySrvs
 @using blazor_hcom.Classes
+@inject UiStateService UiStateSrvs
+
 
 <HeadContent>
-	<title>@FullTitle</title>
+	<SectionOutlet SectionName="PageTitle" />
 </HeadContent>
 
 <NavMenu />
 
-<div class="toast-container position-fixed top-0 end-0 mt-5 p-3" id="toast-container">
-	 @foreach (var msg in Messages.TakeLast(1))
-	 { <Toast Message="msg" /> }
-	 </div>
+<div class="toast-container position-fixed top-0 end-0 mt-5 p-3"
+	 id="toast-container"
+>
+	@if (Message is not null)
+	{ <Toast Message="@Message" />}
+</div>
 
-<div class="container">
+<div class="container
+			@(UiStateSrvs.ModalOpen ? "modal-open" : null)"
+	 style="@(UiStateSrvs.ModalOpen
+			? "overflow: hidden;"
+			: null)">
 	<main>
-        <article class="content px-4">
+        <article class="content">
             @Body
         </article>
     </main>
@@ -29,21 +37,14 @@
 </footer>
 
 @code {
-    [CascadingParameter] 
-    public string? Title { get; set; }
-
-	private string FullTitle =>
-		string.IsNullOrWhiteSpace(Title)
-		? "HCOM" 
-        : $"{Title} - HCOM";
-
-	@* Expose messages from the NotificationService *@
-	private IReadOnlyList<AppMessage> Messages => NotifySrvs.Messages;
+	@* Expose the latest message from the NotificationService *@
+	private AppMessage? Message => NotifySrvs.Messages.LastOrDefault();
 
 	@* Subscribe to the NotificationService on Component Initialization *@
 	protected override void OnInitialized()
 	{
 		NotifySrvs.OnMessageAdded += Notify;
+		UiStateSrvs.OnChange += StateHasChanged;
 	}
 
 	private async Task Notify(AppMessage message){
@@ -55,5 +56,6 @@
 	public void Dispose()
 	{
 		NotifySrvs.OnMessageAdded -= Notify;
+		UiStateSrvs.OnChange -= StateHasChanged;
 	}
 }

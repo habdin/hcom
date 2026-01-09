@@ -1,0 +1,9 @@
+@* AppTitle razor *@
+
+<SectionContent SectionName="PageTitle">
+	<title>@(string.IsNullOrWhiteSpace(Title) ? "HCOM" : $"HCOM - {Title}")</title>
+</SectionContent>
+
+@code {
+	[Parameter] public string? Title { get; set; }
+}

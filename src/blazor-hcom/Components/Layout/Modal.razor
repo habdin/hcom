@@ -1,53 +1,195 @@
-@* Generic boostrap-styled Modal that wraps CRUDForm component *@
-@* REMOVED commented unnecessary code and relevant comments.
-Switch from c# conditional if statement to JS visibility and hiding
-the former was not found to be functioning.*@
+@*
+
+Modal<TEntity> — Pure Blazor, State-Driven Modal Component
+
+Purpose
+-------
+This component implements a Bootstrap-styled modal dialog that is **entirely
+controlled in C#**, without Bootstrap JavaScript or JS interop.
+
+It serves as a reusable, generic modal shell capable of hosting CRUD forms,
+including multi-stage workflows involving dependent entities.
+
+The modal is not a passive visual wrapper; it owns its visibility, focus,
+keyboard handling, and backdrop interaction semantics.
+
+-------------------------------------------------------------------------------
+
+Core Design Principles
+----------------------
+• Fully C#-controlled (no JSRuntime, no Bootstrap JS)
+• Explicit state machine (Visible / Shown)
+• Deterministic focus ownership
+• Keyboard-accessible (Esc handling)
+• Backdrop behavior modeled explicitly via enum
+• Parent-controlled intent, modal-controlled mechanics
+
+-------------------------------------------------------------------------------
+
+Visibility & State Model
+------------------------
+The modal maintains two internal visibility flags:
+
+• IsVisible
+  - Controls whether the modal/backdrop are rendered and displayed.
+  - Governs tabindex participation and DOM presence.
+
+• IsShown
+  - Controls Bootstrap "show" CSS class.
+  - Enables entry/exit animations.
+
+Show() and Hide() manipulate these flags in a specific order to preserve
+animation timing while keeping the component deterministic.
+
+The modal **owns its internal visibility**, while the parent is notified via
+OnVisibilityChanged for app-level side effects (e.g., body scroll locking).
+
+-------------------------------------------------------------------------------
+
+Focus & Accessibility Contract
+-------------------------------
+• The modal root is focusable **only when visible**
+  (tabindex="0" when visible, "-1" when hidden).
+• Focus is programmatically moved to the modal root on Show().
+• ESC key handling is attached directly to the modal root.
+• Hidden modals are completely removed from the tab order.
+
+This mirrors Bootstrap’s runtime behavior while remaining fully declarative.
+
+-------------------------------------------------------------------------------
+
+Backdrop Semantics
+------------------
+Backdrop behavior is modeled explicitly using ModalBackdrop:
+
+• Enabled
+  - Backdrop is rendered.
+  - Clicking outside the dialog closes the modal.
+
+• Static
+  - Backdrop is rendered.
+  - Clicking outside the dialog does nothing.
+
+• Disabled
+  - No backdrop is rendered.
+  - All clicks fall through to the page.
+
+Important Design Note:
+Backdrop clicks are **not** handled on the backdrop element itself.
+Instead, the modal root acts as the full-screen interaction surface:
+
+• The modal root captures clicks.
+• The dialog stops propagation.
+• Close logic is conditionally executed based on Backdrop mode.
+
+This avoids fragile pointer-events CSS hacks and ensures consistent behavior.
+
+-------------------------------------------------------------------------------
+
+Keyboard & Mouse Interaction
+----------------------------
+• ESC key closes the modal via HandleKeyDown.
+• Backdrop clicks are processed via HandleBackdropClicked.
+• Dialog clicks stop propagation explicitly.
+
+All interaction rules are enforced in C#, not CSS or JavaScript.
+
+-------------------------------------------------------------------------------
+
+Content & Staging
+-----------------
+The modal supports multi-stage workflows via ModalStage:
+
+• MainForm
+• DependentForm
+
+Content is injected using RenderFragment parameters, allowing the parent
+component to control form composition without the modal knowing domain details.
+
+-------------------------------------------------------------------------------
+
+Public API (Conceptual)
+-----------------------
+Parameters:
+• Item                      — Entity instance being edited/viewed
+• Operation                 — CRUD operation indicator
+• Title                     — Modal title text
+• BtnSubmitText             — Submit button label
+• Size                      — ModalSize enum
+• Backdrop                  — ModalBackdrop enum
+• Stage                     — ModalStage enum
+• MainFormContent           — Primary form fragment
+• DependentFormContent      — Dependent form fragment
+• OnSubmit                  — Submit action callback
+• OnClose                   — Close intent callback
+• OnVisibilityChanged(bool) — Visibility notification hook
+
+Methods:
+• Show() — Displays modal, sets focus, triggers animation
+• Hide() — Hides modal, releases focus, reverses animation
+
+-------------------------------------------------------------------------------
+
+Explicit Non-Goals
+------------------
+• No automatic body manipulation
+• No implicit JS-based behavior
+• No global state ownership
+• No hard dependency on CRUD semantics
+
+The modal is a **mechanical UI component**, not an application controller.
+
+-------------------------------------------------------------------------------
+End of Modal<TEntity> documentation
+===============================================================================
+*@
 
 @typeparam TEntity
 @using blazor_hcom.Models
 
-	<div class="modal fade" tabindex="-1" id="theModal" data-bs-backdrop="static">
-		<div class="modal-dialog modal-xl">
-			<div class="modal-content">
-				<div class="modal-header">
-					@if (Item != null)
-					{<h3 class="modal-title" id="theModalTitle">@Title</h3>}
-					<button type="button" class="btn-close" data-bs-dismiss="modal"></button>
-				</div>
-				<div class="modal-body" id="theModalBody">
-					@if (Stage == ModalStage.MainForm) {
-						@MainFormContent
-					}
-					else if (Stage == ModalStage.DependentForm) {
-						@DependentFormContent
-					}
-				</div>
-				<div class="modal-footer">
-					@if (Operation != "read")
-					{
-						<button class="btn btn-secondary" data-bs-dismiss="modal" id="theModalButtoneCancel">Cancel</button>
-					}
-					<button class="btn btn-primary" type="button" 
-					        @onclick="OnSubmit" id="theModalButtonSubmit">@ButtonSubmitText</button>
-				</div>
+@namespace blazor_hcom.Components.Layout
+
+@* The Backdrop shows only if the Modal is visible and its state is not disabled .*@
+@if (IsVisible && Backdrop != ModalBackdrop.Disabled)
+{
+	<div class="@BackdropClass"></div>
+}
+
+@*
+  - Interaction: Modal layer now handles backdrop clicks because it 
+    visually obscures the actual backdrop div.
+  - Event Flow: Used stopPropagation on .modal-dialog to isolate internal 
+    clicks from the dismissal logic.
+*@
+<div class="modal @(Fading ? "fade" : "") @(IsShown ? "show" : "")"
+	 tabindex="@(IsVisible ? "0" : "-1")"
+	 id="theModal"
+	 @ref="_modalRoot"
+	 @onkeydown="HandleKeyDown"
+	 @onclick="HandleBackdropClicked"
+	 style="@(IsVisible ? "display: block;" : "display: none;")">
+	<div class="modal-dialog @ModalSizeClass" @onclick:stopPropagation="true">
+		<div class="modal-content">
+			<div class="modal-header">
+				<h3 class="modal-title" id="theModalTitle">@Title</h3>
+				<button class="btn btn-close" @onclick="OnClose"></button>
+			</div>
+			<div class="modal-body">
+				@if (Stage == ModalStage.MainForm) {
+					@MainFormContent
+				}
+				else if (Stage == ModalStage.DependentForm) {
+					@DependentFormContent
+				}
+			</div>
+			<div class="modal-footer">
+				@if(Operation != "read"){
+					<button class="btn btn-secondary rounded-pill" type="button"
+						@onclick="OnClose" id="theModalButtonCancel ">Cancel</button>
+				}
+				<button class="btn btn-primary rounded-pill" type="button"
+							   id="theModalButtonSubmit" @onclick="OnSubmit">@BtnSubmitText</button>
 			</div>
 		</div>
 	</div>
-
-@code {
-	public enum ModalStage {
-		MainForm,
-		DependentForm
-	}
-
-	[Parameter] public TEntity? Item { get; set; }
-	[Parameter] public string? Operation { get; set; }
-	[Parameter] public string? Title { get; set; }
-	[Parameter] public ModalStage Stage { get; set; }
-	[Parameter] public RenderFragment? MainFormContent { get; set; }
-	[Parameter] public RenderFragment? DependentFormContent { get; set; }
-	[Parameter] public string? ButtonSubmitText { get; set; }
-	[Parameter] public EventCallback OnSubmit { get; set; }
-	// These receive relevant information from the ancestor Index component.
-	[Parameter] public TestContext? Context { get; set; }
-}
+</div>

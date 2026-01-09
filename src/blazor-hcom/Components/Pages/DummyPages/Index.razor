@@ -1,17 +1,17 @@
 @*
-    Index.razor - Main entry point for listing and managing Dummy entities.
+   Index.razor - Main entry point for listing and managing Dummy entities.
 
-    Features:
-    - Interface toggling (Card/Table)
-    - Searching functionality
-    - Data loading from EF Core context
-    - Placeholder methods for CRUD modal interaction
+   Features:
+   - Interface toggling (Card/Table)
+   - Searching functionality
+   - Data loading from EF Core context
+   - Placeholder methods for CRUD modal interaction
 
-    To be implemented:
-	- Sorting functionality for Table Interface.
-	- Paging functionality for data
-    - Modal display logic
-*@
+   To be implemented:
+   - Sorting functionality for Table Interface.
+   - Paging functionality for data
+   - Modal display logic
+ *@
 
 @page "/dummies"
 @using Microsoft.EntityFrameworkCore
@@ -19,40 +19,35 @@
 
 @namespace blazor_hcom.Components.Pages.DummyPages
 
-<PageTitle>Index</PageTitle>
+<AppTitle Title="Dummy Index" />
 
 <div class="d-flex pt-5">
 	<h2 class="display-5 flex-grow-1 mt-4">List of Dummies</h2>
-	<Toolbar
-		ViewToggled="@HandleToggleView"
-		SearchString="@SearchHandler"
-		OnAddNew="HandleCreate"
+	<Toolbar ViewToggled="@HandleToggleView"
+			 SearchString="@SearchHandler"
+			 OnAddNew="HandleCreate"
 	/>
 </div>
 <hr class="mb-3">
 
-<!-- DELETE: When Modal and CRUDForm are ready and functional. -->
-<!-- <p>
-     <a href="dummies/create">Create New</a>
-	 </p>-->
-<!-- END OF DELETE -->
-
 <DataDisplay TEntity="Dummy"
-		Items="@Items"
-		IsLoading="@IsLoading"
-		IsTable="@ViewAsTable"
-		OnUpdateRecord="HandleUpdate"
-		OnDeleteRecord="HandleDelete"
-		OnDetailsRecord="HandleRead"
+			 Items="@Items"
+			 IsLoading="@IsLoading"
+			 IsTable="@ViewAsTable"
+			 OnUpdateRecord="HandleUpdate"
+			 OnDeleteRecord="HandleDelete"
+			 OnDetailsRecord="HandleRead"
 />
 
 
-<Modal TEntity="Dummy"
-       Item="@Item"
-	   Title="@ModalTitle"
-	   Operation="@CrudOperation"
-	   ButtonSubmitText="@ModalSubmitBtnText"
-       MainFormContent="@(MainForm(CrudOperation))"
-       OnSubmit="(() => HandleSubmit(Item, CrudOperation))"
+<Modal @ref="_myModalRef" TEntity="Dummy" Fading="true"
+			Operation="@CrudOperation" Title="@ModalTitle"
+			MainFormContent="@(MainForm(CrudOperation))"
+			BtnSubmitText="@ModalSubmitBtnText"
+			OnVisibilityChanged="@HandleModalVisibility"
+			Size="Modal<Dummy>.ModalSize.ExtraLarge"
+			Backdrop="Modal<Dummy>.ModalBackdrop.Static"
+			BackDropClick="HandleBackdropClick"
+			OnSubmit="(() => HandleSubmit(Item, CrudOperation))"
+			OnClose="ModalHideAsync"
 />
-

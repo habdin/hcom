@@ -7,11 +7,3 @@ public record AppMessage
 	MessageLevel Level = MessageLevel.Info,
 	DateTime CreatedAt = default
 );
-
-public enum MessageLevel
-{
-	Info,
-	Success,
-	Warning,
-	Error,
-}
