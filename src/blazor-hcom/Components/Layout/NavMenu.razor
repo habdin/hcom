@@ -1,8 +1,7 @@
-﻿<!-- TODO: Do a manual test for this feature when the App is deployed via a mobile
+<!-- TODO: Do a manual test for this feature when the App is deployed via a mobile
 web browser. -->
 
 @inject IMessageService NotifySrvs
-@inject IJSRuntime JS
 @using blazor_hcom.Classes
 
 <nav class="navbar navbar-dark navbar-expand-md bg-primary border-bottom shadow mb-3 fixed-top">
@@ -31,7 +30,8 @@ web browser. -->
 				}
 			</div>
 		</div>
-		<button type="button" class="btn btn-primary position-relative ms-auto rounded-circle shadow-sm">
+		<button class="btn btn-primary position-relative ms-auto rounded-circle shadow-sm"
+				type="button" @onclick="ToggleNotificationPanel">
 			<svg xmlns="http://www.w3.org/2000/svg" width="20" height="20"
 				fill="currentColor" viewBox="0 0 24 24">
 				<path d="M12 2a7 7 0 0 1 7 7v4.5c0 .9.3 1.8.9 2.5l.4.5c.5.6.1 1.5-.7 1.5H4.4c-.8 0-1.2-.9-.7-1.5l.4-.5c.6-.7.9-1.6.9-2.5V9a7 7 0 0 1 7-7z"/>
@@ -41,7 +41,7 @@ web browser. -->
 			@if (Messages.Count > 0)
 			{
 				<span class="position-absolute top-0 start-100 translate-middle p-1 bg-danger border border-light rounded-pill">
-					<span class="visually-hidden">New alerts</span>
+					<span>@Messages.Count</span>
 				</span>
 			}
 		</button>
@@ -76,6 +76,9 @@ web browser. -->
 	@* Expose messages from the MessageService *@
 	private IReadOnlyList<AppMessage> Messages => NotifySrvs.Messages;
 
+	[Parameter] public EventCallback NotificationToggle { get; set; }
+	private async Task ToggleNotificationPanel() => await NotificationToggle.InvokeAsync();
+
 	protected override void OnInitialized()
 	{
 		NotifySrvs.OnMessagesChanged += Notify;
@@ -90,10 +93,4 @@ web browser. -->
 	{
 		NotifySrvs.OnMessagesChanged -= Notify;
 	}
-
-
-	/* private async Task ToggleToastContainer () {
-		await JS.InvokeVoidAsync("toggleToastContainer", "all_msgs_toast_container");
-			} */
-
 }

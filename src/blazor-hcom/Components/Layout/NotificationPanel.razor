@@ -1,0 +1,30 @@
+@using blazor_hcom.Classes
+
+@namespace blazor_hcom.Components.Layout
+
+<div class="toast-container position-fixed top-0 end-0 mt-5 p-3" id="notification-panel">
+
+@if(Messages!.Count < 1)
+{<p class="alert alert-info">You have no messages</p> }
+
+else
+{	
+	@foreach (var msg in Messages)
+	{
+		<div class="mb-1">
+			<Toast Message="@msg" AutoHide="false" />
+		</div>
+	}
+		<button class="btn btn-danger btn-sm ms-auto"
+				style="pointer-events: true;"
+				@onclick="OnClearAll" title="Clear Messages">
+			<i class="fas fa-trash"></i>
+		</button>
+}
+</div>
+
+@code {
+	[Parameter] public IReadOnlyList<AppMessage>? Messages { get; set; }
+	[Parameter] public EventCallback OnClearAll { get; set; }
+	private void OnClearAllHandler() => OnClearAll.InvokeAsync();
+}

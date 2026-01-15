@@ -9,13 +9,10 @@
 	<SectionOutlet SectionName="PageTitle" />
 </HeadContent>
 
-<NavMenu />
+<NavMenu NotificationToggle="ToggleNotificationPanel" />
 
-<div class="toast-container position-fixed top-0 end-0 mt-5 p-3"
-	 id="toast-container"
->
-	@if (Message is not null)
-	{ <Toast Message="@Message" />}
+<div style="@(IsPanelVisible ? "display: block;" : "display: none;")">
+	<NotificationPanel Messages="Messages" OnClearAll="()=>NotifySrvs.ClearAllMessages()" />
 </div>
 
 <div class="container
@@ -38,24 +35,41 @@
 
 @code {
 	@* Expose the latest message from the NotificationService *@
-	private AppMessage? Message => NotifySrvs.Messages.LastOrDefault();
+	private IReadOnlyList<AppMessage> Messages => NotifySrvs.Messages.Count == 0
+		? Array.Empty<AppMessage>()
+		: NotifySrvs.Messages.Reverse().ToList();
+
+	private bool IsPanelVisible { get; set; } = false;
+	private void ToggleNotificationPanel () {
+		StateHasChanged();
+		IsPanelVisible = !IsPanelVisible;
+	}
 
 	@* Subscribe to the NotificationService on Component Initialization *@
 	protected override void OnInitialized()
 	{
 		NotifySrvs.OnMessageAdded += Notify;
+		NotifySrvs.OnMessagesChanged += Notify;
 		UiStateSrvs.OnChange += StateHasChanged;
 	}
 
+	@* Used method overloading to respond to MessageService eventcallbacks *@
 	private async Task Notify(AppMessage message){
+		IsPanelVisible = true;
 		await InvokeAsync(StateHasChanged);
 	} 
+
+	private async Task Notify() {
+		IsPanelVisible = true;
+		await InvokeAsync(StateHasChanged);
+	}
 	
 	@* Unsubscribe from NotificationService on component disposal
 	   (required to be public due to IDisposable) *@
 	public void Dispose()
 	{
 		NotifySrvs.OnMessageAdded -= Notify;
+		NotifySrvs.OnMessagesChanged -= Notify;
 		UiStateSrvs.OnChange -= StateHasChanged;
 	}
 }

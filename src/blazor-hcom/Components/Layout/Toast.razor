@@ -1,0 +1,16 @@
+@namespace blazor_hcom.Components.Layout
+
+<div class="toast @(IsVisible ? "fade" : string.Empty)
+			@(IsShown ? "show": string.Empty)" id="@ToastId">
+	<div class="toast-header">
+		<ToastHeader Level="Message!.Level" CreatedAt="Message!.CreatedAt" />
+		<button class="ms-auto btn btn-sm btn-danger"
+				@onclick="()=> MessageDeleted(Message.Id)"
+				title="Remove Message"
+		>
+			<i class="fas fa-trash"></i>
+		</button>
+		<button class="btn-close ms-3" @onclick="Hide"></button>
+	</div>	
+	<div class="toast-body text-bg-@Message.Level.ToBootStrapColor()">@Message.Text</div>	
+</div>

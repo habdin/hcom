@@ -1,0 +1,30 @@
+@using Humanizer
+@using Humanizer.Localisation
+@using blazor_hcom.Classes
+
+@namespace blazor_hcom.Components.Layout
+
+<i class="fas @Presentation.Icon text-@Presentation.Css me-2"></i>
+<strong class="me-auto">@LvlToString</strong>
+@if (Elapsed.TotalSeconds > 10)
+{ <span class="text-muted me-2">@Elapsed.Humanize(precision: 1, minUnit: TimeUnit.Second) ago.</span> }
+
+@code
+{
+	@* The component exposes a MessageLevel Level and a DateTime CreatedAt as parameters and
+	internally react to setting them from the parent component.*@
+	[Parameter] public MessageLevel Level { get; set; }
+	[Parameter] public DateTime CreatedAt { get; set; }
+
+	private (string Icon, string Css) Presentation => Level switch
+	{
+		MessageLevel.Info => ("fa-info-circle", "info"),
+		MessageLevel.Success => ("fa-check-circle", "success"),
+		MessageLevel.Warning => ("fa-exclamation-circle", "warning"),
+		MessageLevel.Error => ("fa-bomb", "danger"),
+		_ => ("fa-circle", "secondary")
+	};
+
+	private string? LvlToString => Level.ToString().Transform(To.SentenceCase);
+	private TimeSpan Elapsed => DateTime.UtcNow - CreatedAt;
+}
