@@ -1,0 +1,14 @@
+@namespace blazor_hcom.Components.Layout
+
+<input name="search" id="dataSearchField" class="form-control p-3 shadow-sm"
+	   placeholder="Search..." type="search"
+	   title="Search" @oninput="HandleSearch"/>
+
+@code {
+	// Code for the TextField searching
+	[Parameter] public EventCallback<string> SearchString { get; set; }
+	private async Task HandleSearch(ChangeEventArgs e)
+	{
+		await SearchString.InvokeAsync(e.Value?.ToString());
+	}
+}

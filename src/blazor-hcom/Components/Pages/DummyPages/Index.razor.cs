@@ -4,7 +4,6 @@ using Microsoft.AspNetCore.Components;
 using blazor_hcom.Models;
 using blazor_hcom.Services;
 
-
 namespace blazor_hcom.Components.Pages.DummyPages;
 
 public partial class Index : ComponentBase, IAsyncDisposable

@@ -1,10 +1,4 @@
-using Microsoft.EntityFrameworkCore;
-using Microsoft.AspNetCore.Components.Forms;
 using Microsoft.AspNetCore.Components;
-using Microsoft.JSInterop;
-using blazor_hcom.Models;
-using blazor_hcom.Services;
-using blazor_hcom.Classes;
 
 namespace blazor_hcom.Components.Pages.DummyPages;
 
