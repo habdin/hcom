@@ -1,0 +1,59 @@
+<!-- vim:foldmethod=indent:ts=2 -->
+{% extends 'hcom/base.html' %}
+{% load static %}
+
+{% block content %}
+
+<!-- Start of Section "Data Title and Choice of method of data showing" -->
+<div class="d-flex">
+  <!-- Title -->
+  <h2 class="display-5 mt-3 flex-grow-1">List of Dummies</h2>
+  <!-- End Title -->
+  <!-- Select list display type -->
+  <div class="d-flex">
+    {% include "hcom/entrsamnt.html" %}
+    {% include "dummy/datamanipulation.html" %}
+  </div>
+</div>
+<hr class="mb-3">
+<!-- End of Section "Data Title and Choice of method of data showing" -->
+
+<!-- Flash messages Location -->
+{% if messages %}
+<ul class="list-group">
+  {% for message in messages %}
+  <li class="list-group-item list-group-item-{{ message.tags }}">{{ message }}</li>
+  {% endfor %}
+</ul>
+{% endif %}
+<!-- End of Flash messages -->
+
+<input type="hidden" value="{{ is_table }}" id="viewtype"/>
+
+<!-- Option 1: Display as Table -->
+{% if is_table %}
+{% include "dummy/tableview.html" %}
+<!-- End Option 1 -->
+
+<!-- Option 2: Display as Card -->
+{% else %}
+{% include "dummy/cardview.html" %}
+{% endif %}
+<!-- End Option 2 -->
+
+<!-- Modal for CRUD operations -->
+<div class="modal fade" tabindex="-1" id="theModal" data-bs-backdrop="static">
+  <!-- The Modal is a dialog box which has a content consisting of header, body and footer
+    The header can include a title + a close button,
+    The body contains the main part of the modal.
+    The footer include button that manipulate the content of the modal.
+  -->
+  {% include "hcom/modal.html" %}
+</div>
+<!-- End of Modal -->
+{% endblock content %}
+
+{% block scripts %}
+<script src="{% static 'js/ui_actions.js'%}" type="module"></script>
+<script src="{% static 'js/dummy_ui_actions.js' %}" type="module"></script>
+{% endblock scripts %}

@@ -1,0 +1,26 @@
+<div class="row">
+  <dt class="col-md-3 col-sm-6">ID</dt>
+  <dd class="col-md-9 col-sm-6">{{ object.id }}</dd>
+
+  <dt class="col-md-3 col-sm-6">Drug</dt>
+  <dd class="col-md-9 col-sm-6">{{ object.drug_name }}</dd>
+
+  <dt class="col-md-3 col-sm-6">Company</dt>
+  <dd class="col-md-9 col-sm-6">{{ object.company }}</dd>
+  
+  <dt class="col-md-3 col-sm-6">Drug Price</dt>
+  <dd class="col-md-9 col-sm-6">{{ object.drug_price }} EGP</dd>
+  
+  <dt class="col-md-3 col-sm-6">Drug Form</dt>
+  <dd class="col-md-9 col-sm-6">{{ object.drug_form }}</dd>
+
+  <dt class="col-md-3 col-sm-6">Drug Dose</dt>
+  <dd class="col-md-9 col-sm-6">{{ object.drug_dose }} gm</dd>
+
+  {% for ingredient in object.ingredient_set.all %}
+  <dt class="col-md-3 col-sm-6">Ingredient</dt>
+  <dd class="col-md-9 col-sm-6">
+    {{ ingredient.name }} {{ ingredient.dose }} mg
+  </dd>
+  {% endfor %}
+  </div>

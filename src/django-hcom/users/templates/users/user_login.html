@@ -1,0 +1,20 @@
+{% extends 'hcom/base.html' %}
+{% load crispy_forms_tags %}
+
+{% block content %}
+<div class="border container p-3">
+<form method="POST">
+  {% csrf_token %}
+  <div class="border-bottom pb-3">
+    <fieldset class="form-group">
+      <legend class="border-bottom mb-4">Sign In</legend>
+      {{ form|crispy }}
+    </fieldset>
+  </div>
+  <div class="form-group ">
+      <button type="Submit" class="btn btn-primary mt-3 ">Login</button>
+      <p class="text-muted mt-4">Forgot your password? <a class="ms-3" href="{% url 'password_reset' %}">Reset password</a></p>
+  </div>
+</form>
+</div>
+{% endblock content %}

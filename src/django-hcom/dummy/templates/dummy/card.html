@@ -1,0 +1,43 @@
+<!-- Cards -->
+<div class="row mt-3" id="cardView">
+{% for object in objects %}
+  <div class="col-sm-12 col-md-6">
+    <div class="card mb-3 shadow">
+      <div class="card-body">
+        <h5 class="card-title">
+          <a href="#" class="text-decoration-none" id="dataItemDetail-{{ object.id }}">
+            {{ object.name }}
+          </a>
+        </h5>
+        <div class="row">
+          <dt class="col-md-3 col-sm-6">Name</dt>
+          <dd class="col-md-9 col-sm-6">{{ object.name }}</dd>
+          <dt class="col-md-3 col-sm-6">Category</dt>
+          <dd class="col-md-9 col-sm-6">{{ object.category }}</dd>
+        </div>
+        <hr>
+        <div class="btn-group shadow" role="group">
+          <a class="btn btn-sm btn-success" type="button" title="Edit Dummy {{ object.name }}" href="#"
+            id="dataItemUpdate-{{ object.id }}">
+            <i class="fas fa-edit"></i>
+          </a>
+          <a class="btn btn-sm btn-danger" type="button" title="Delete Dummy {{ object.name }}" href="#"
+            id="dataItemDelete-{{ object.id }}">
+            <i class="fas fa-trash"></i>
+          </a>
+        </div>
+      </div>
+    </div>
+  </div>
+{% empty %}
+<p class="alert alert-info">There are no dummies, please add one.</p>
+{% endfor %}
+
+<!-- Paginator -->
+{% if is_paginated %}
+{% include "hcom/paginator.html" %}
+{% endif %}
+<!-- End Paginator -->
+
+<!-- End Cards -->
+</div>

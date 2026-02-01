@@ -1,0 +1,12 @@
+<div class="btn-group mt-3 p-3" role="group">
+    <a title="View as Cards" 
+       class="btn btn-primary shadow" 
+       href="{% url 'pharmacy:company-list' %}">
+        <i class="fas fa-id-card"></i>
+    </a>
+    <a title="View as Table" 
+       class="btn btn-primary shadow"
+       href="{% url 'pharmacy:company-list' %}?is_table=true">
+        <i class="fas fa-table"></i>
+    </a>
+  </div>

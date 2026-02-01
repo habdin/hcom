@@ -1,0 +1,45 @@
+<!-- Model cards location -->
+
+<div class="row mt-3" id="cardView">
+  {% for object in objects %}
+  <div class="col-sm-12 col-md-6">
+    <div class="card border-primary mb-3 shadow">
+      <div class="card-body">
+        <h5 class="card-title">
+          <a href="#" class="text-decoration-none" onclick="ReadDataEntry({{ object.id }})">{{ object.username }}</a>
+        </h5>
+        {% if object.is_staff %}
+        <p class="card-text"><small class="text-muted">Administrator</small></p>
+        {% else %}
+        <p class="card-text"><small class="text-muted">Normal user</small></p>
+        {% endif %}
+        <div class="row">
+          <dt class="col-md-3 col-sm-6">Full Name</dt>
+          <dd class="col-md-9 col-sm-6">{{ object.first_name }} {{ object.last_name }}</dd>
+          <dt class="col-md-3 col-sm-6">Email</dt>
+          <dd class="col-md-9 col-sm-6">{{ object.email }}</dd>
+        </div>
+        <hr>
+        <div class="btn-group shadow" role="group">
+          <a class="btn btn-sm btn-success" 
+             type="button" 
+             title="Edit User {{ object.username }}" 
+             href="#"
+             onclick="UpdateDataEntry({{ object.id }})">
+            <i class="fas fa-edit"></i>
+          </a>
+          <a class="btn btn-sm btn-danger" 
+             type="button" 
+             title="Delete User {{ object.username }}" 
+             href="#" 
+             onclick="DeleteDataEntry({{ object.id }})">
+            <i class="fas fa-trash"></i>
+          </a>
+        </div>
+      </div>
+    </div>
+  </div>
+  {% empty %}
+  <p class="alert alert-info">There are no users, please add one.</p>
+  {% endfor %}
+</div>

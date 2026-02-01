@@ -1,0 +1,39 @@
+<h3 class="bg-primary text-light p-3 rounded shadow">Doctor Information</h3>
+<div class="d-flex flex-row">
+  <div class="flex-shrink mt-3">
+    <img class="rounded" width="90px" src="{{ object.physician.image.url }}" alt=""> 
+  </div>
+  <div class="flex-grow-1 mt-3">
+    <div class="d-flex flex-column">
+      <div class="d-flex ">
+        <dt class="flex-shrink ms-3">Doctor Name:</dt>
+        <dd class="flex-grow-1 ms-3">{{ object.physician }}</dd>
+      </div>
+      <div class="d-flex">
+        <dt class="flex-shrink ms-3">Speciality:</dt>
+        <dd class="flex-grow-1 ms-3">{{ object.physician.speciality }}</dd>
+      </div>
+      <div class="d-flex">
+        <dt class="flex-shrink ms-3">Biography:</dt>
+        <dd class="flex-grow-1 ms-3">{% lorem 50 w %}</dd>
+      </div>
+    </div>
+  </div>
+</div>
+
+<h3 class="bg-primary mt-3 text-light p-3 rounded shadow">Work Date and Time</h3>
+<div class="d-flex flex-column">
+  <div class="d-flex flex-row">
+    <dt class="flex-shrink ms-3">Opening Time:</dt>
+    <dd class="flex-grow-1 ms-3">{{ object.opening_time }}</dd>
+  </div> 
+  <div class="d-flex flex-row">
+    <dt class="flex-shrink ms-3">Closing Time:</dt>
+    <dd class="flex-grow-1 ms-3">{{ object.closing_time }}</dd>
+  </div> 
+  <div class="d-flex flex-row">
+    <dt class="flex-shrink ms-3">Visit Fees:</dt>
+    <dd class="flex-grow-1 ms-3">300</dd>
+  </div> 
+
+</div>
