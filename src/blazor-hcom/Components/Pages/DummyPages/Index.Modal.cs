@@ -1,7 +1,9 @@
 using Microsoft.EntityFrameworkCore;
 using Microsoft.AspNetCore.Components.Forms;
 using Microsoft.AspNetCore.Components;
+
 using blazor_hcom.Models;
+
 using blazor_hcom.Classes;
 using blazor_hcom.Components.Layout;
 
@@ -9,18 +11,18 @@ namespace blazor_hcom.Components.Pages.DummyPages;
 
 public partial class Index : ComponentBase, IAsyncDisposable
 {
-    // Modal Related properties that used to tweak the <Modal />
-    private Modal<Dummy>? _myModalRef;
-    private string CrudOperation { get; set; } = "";
+	// Modal Related properties that used to tweak the <Modal />
+	private Modal<Dummy>? _myModalRef;
+	private string CrudOperation { get; set; } = "";
 	private string ModalSubmitBtnText { get; set; } = "Save";
 	private string ModalTitle { get; set; } = "";
 
-    // Modal methods
-	private async Task HandleBackdropClick() {
-        await _myModalRef!.Hide();
-    }
+	// Modal methods
+	private static Task HandleBackdropClick<TEntity>(Modal<TEntity> modal) => modal.Hide();
+	private static Task ModalShowAsync<TEntity>(Modal<TEntity> modal) => modal.Show();
+	private static Task ModalHideAsync<TEntity>(Modal<TEntity> modal) => modal.Hide();
 
-	private void HandleModalVisibility (bool visible)
+	private void HandleModalVisibility(bool visible)
 	{
 		// Since the modal catches the state of modal visibility which
 		// is changed via calling a method to show the modal and that
@@ -28,12 +30,11 @@ public partial class Index : ComponentBase, IAsyncDisposable
 		// The Role of the method is to catch this state change and change
 		// the service state. This will be used to toggle the
 		// overflow:hidden state in the body tag in App.razor
-        UiStateSrvs.ModalOpen = visible;
-    }
-    private async Task ModalShowAsync() => await _myModalRef!.Show();
+		UiStateSrvs.ModalOpen = visible;
+	}
 
-    private async Task ModalHideAsync() => await _myModalRef!.Hide();
-    private RenderFragment MainForm (string operation) => operation switch
+	// Method that builds and renders the internal form of the modal
+	private RenderFragment MainForm(string operation) => operation switch
 	{
 		"create" or "update" => builder =>
 		{
@@ -42,30 +43,34 @@ public partial class Index : ComponentBase, IAsyncDisposable
 			builder.AddAttribute(2, "Operation", operation);
 			builder.AddAttribute(3, "EditContext", editcontext);
 			builder.CloseComponent();
-		},
-			"read" or "delete" => builder =>
-		  
-		{
-            builder.OpenComponent(0, typeof(ModelReadDeleteForm));
-            builder.AddAttribute(1, "Dummy", Item);
-            builder.AddAttribute(2, "Operation", operation);
-            builder.CloseComponent();
-        },
-		
+		}
+		,
+		"read" or "delete" => builder =>
+
+	{
+		builder.OpenComponent(0, typeof(ModelReadDeleteForm));
+		builder.AddAttribute(1, "Dummy", Item);
+		builder.AddAttribute(2, "Operation", operation);
+		builder.CloseComponent();
+	}
+		,
+
 		_ => builder =>
 		{
-            builder.AddMarkupContent(0, "<p class=\"alert alert-warning\">Invalid Operation</p>");
+			builder.AddMarkupContent(0, "<p class=\"alert alert-warning\">Invalid Operation</p>");
 		}
 	};
 
 	// Creates an EditContext for any provided entity.
-	private EditContext CreateEditContext (Dummy item) => new EditContext(item);
+	private static EditContext CreateEditContext(Dummy item) => new EditContext(item);
 
 	// Helper methods used to tweak Modal title.
 	// GetModalTitle depends on GetTitle.
-	private string GetTitle (Dummy item) => item?.Name ?? "";
-	private string GetModalTitle (string crudOper, Dummy item) {
-		string OperTitle = crudOper switch {
+	private string GetTitle(Dummy item) => item?.Name ?? "";
+	private string GetModalTitle(string crudOper, Dummy item)
+	{
+		string OperTitle = crudOper switch
+		{
 			"create" => "Create New",
 			"read" => "Details for",
 			"update" => "Edit",
@@ -73,14 +78,15 @@ public partial class Index : ComponentBase, IAsyncDisposable
 			_ => "Operation"
 		};
 		string itemName = "";
-		if (item != null) {
+		if (item != null)
+		{
 			itemName = GetTitle(item);
 		}
 		return string.IsNullOrWhiteSpace(itemName)
 			? $"{OperTitle} Record"
 			: $"{OperTitle} {itemName}";
 	}
-private async Task HandleSubmit (Dummy item, string? operation)
+	private async Task HandleSubmit(Dummy item, string? operation)
 	{
 		// [HCOM-DESIGN NOTE]
 		// HandleSubmit() = central submission handler for Dummy modal.
@@ -92,24 +98,24 @@ private async Task HandleSubmit (Dummy item, string? operation)
 		// The flow starts by defining both ExecValidOperation and ExecInvalidOperation
 		// then using try/catch/finally combo to fulfill the explained goals.
 
-		async Task<bool> ExecValidOperation ()
+		async Task<bool> ExecValidOperation()
 		{
-			switch(operation)
+			switch (operation)
 			{
 				case "create":
-					context.Dummy.Add(Item);
+					context.Dummy.Add(item);
 					// FOR REMOVAL: Logging with successful in memory creation with valid form data.
 					Logger.LogInformation("Item being created in memory not in database.");
 					break;
 
 				case "update":
-					context.Dummy.Update(Item);
+					context.Dummy.Update(item);
 					// FOR REMOVAL: Logging with successful in memory updating with valid form data.
 					Logger.LogInformation("Item being updated in memory not in database.");
 					break;
 
 				case "delete":
-					context.Dummy.Remove(Item);
+					context.Dummy.Remove(item);
 					// FOR REMOVAL: Logging with successful in memory removal with valid form data.
 					Logger.LogInformation("Item being deleted in memory not in database.");
 					break;
@@ -128,10 +134,10 @@ private async Task HandleSubmit (Dummy item, string? operation)
 				);
 			}
 
-            return true;
+			return true;
 		}
 
-		async Task<bool> ExecInvalidOperation ()
+		async Task<bool> ExecInvalidOperation()
 		{
 			Logger.LogInformation("Validation failed. Form will remain open.");
 			await InvokeAsync(StateHasChanged);
@@ -153,13 +159,13 @@ private async Task HandleSubmit (Dummy item, string? operation)
 
 		catch (DbUpdateConcurrencyException ex)
 		{
-            Logger.LogWarning(ex, "Concurrency conflict during database operation");
-        }
+			Logger.LogWarning(ex, "Concurrency conflict during database operation");
+		}
 
 		catch (DbUpdateException ex)
 		{
-            Logger.LogError(ex, "Database update failed");
-        }
+			Logger.LogError(ex, "Database update failed");
+		}
 
 		catch (Exception ex)
 		{
@@ -170,12 +176,12 @@ private async Task HandleSubmit (Dummy item, string? operation)
 		{
 			if (shouldClose)
 			{
-                await ModalHideAsync();
+				await ModalHideAsync<Dummy>(_myModalRef!);
 				await LoadItemsAsync();
-                // var lastMessage = NotifySrvs.Messages.Last();
-                // var ToastId = $"toast{lastMessage.Id}";
-                // await JS.InvokeVoidAsync("finalizeSubmit", "theModal", ToastId);
-                Logger.LogInformation("Modal closed after successful operation.");
+				// var lastMessage = NotifySrvs.Messages.Last();
+				// var ToastId = $"toast{lastMessage.Id}";
+				// await JS.InvokeVoidAsync("finalizeSubmit", "theModal", ToastId);
+				Logger.LogInformation("Modal closed after successful operation.");
 			}
 			else
 			{

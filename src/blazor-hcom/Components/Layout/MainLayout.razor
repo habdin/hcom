@@ -15,12 +15,9 @@
 	<NotificationPanel Messages="Messages" OnClearAll="()=>NotifySrvs.ClearAllMessages()" />
 </div>
 
-<div class="container
-			@(UiStateSrvs.ModalOpen ? "modal-open" : null)"
-	 style="@(UiStateSrvs.ModalOpen
-			? "overflow: hidden;"
-			: null)">
-	<main>
+<div class="container @(UiStateSrvs.ModalOpen ? "modal-open" : null)"
+     style="@(UiStateSrvs.ModalOpen ? "overflow: hidden;" : null)">
+    <main>
         <article class="content">
             @Body
         </article>
@@ -33,43 +30,44 @@
     </div>
 </footer>
 
-@code {
-	@* Expose the latest message from the NotificationService *@
-	private IReadOnlyList<AppMessage> Messages => NotifySrvs.Messages.Count == 0
-		? Array.Empty<AppMessage>()
-		: NotifySrvs.Messages.Reverse().ToList();
+@code 
+{
+    @* Expose the latest message from the NotificationService *@
+    private IReadOnlyList<AppMessage> Messages => NotifySrvs.Messages.Count == 0
+	? Array.Empty<AppMessage>()
+	: NotifySrvs.Messages.Reverse().ToList();
 
-	private bool IsPanelVisible { get; set; } = false;
-	private void ToggleNotificationPanel () {
-		StateHasChanged();
-		IsPanelVisible = !IsPanelVisible;
-	}
+    private bool IsPanelVisible { get; set; } = false;
+    private void ToggleNotificationPanel () {
+	StateHasChanged();
+	IsPanelVisible = !IsPanelVisible;
+    }
 
-	@* Subscribe to the NotificationService on Component Initialization *@
-	protected override void OnInitialized()
-	{
-		NotifySrvs.OnMessageAdded += Notify;
-		NotifySrvs.OnMessagesChanged += Notify;
-		UiStateSrvs.OnChange += StateHasChanged;
-	}
+    @* Subscribe to the NotificationService on Component Initialization *@
+    protected override void OnInitialized()
+    {
+	NotifySrvs.OnMessageAdded += Notify;
+	NotifySrvs.OnMessagesChanged += Notify;
+	UiStateSrvs.OnChange += StateHasChanged;
+    }
 
-	@* Used method overloading to respond to MessageService eventcallbacks *@
-	private async Task Notify(AppMessage message){
-		IsPanelVisible = true;
-		await InvokeAsync(StateHasChanged);
-	} 
+    @* Used method overloading to respond to MessageService eventcallbacks *@
+    private async Task Notify(AppMessage message){
+	IsPanelVisible = true;
+	await InvokeAsync(StateHasChanged);
+    } 
 
-	private async Task Notify() {
-		IsPanelVisible = true;
-		await InvokeAsync(StateHasChanged);
-	}
-	
-	@* Unsubscribe from NotificationService on component disposal
-	   (required to be public due to IDisposable) *@
-	public void Dispose()
-	{
-		NotifySrvs.OnMessageAdded -= Notify;
-		NotifySrvs.OnMessagesChanged -= Notify;
-		UiStateSrvs.OnChange -= StateHasChanged;
-	}
+    private async Task Notify() {
+	IsPanelVisible = true;
+	await InvokeAsync(StateHasChanged);
+    }
+    
+    @* Unsubscribe from NotificationService on component disposal
+       (required to be public due to IDisposable) *@
+    public void Dispose()
+    {
+	NotifySrvs.OnMessageAdded -= Notify;
+	NotifySrvs.OnMessagesChanged -= Notify;
+	UiStateSrvs.OnChange -= StateHasChanged;
+    }
 }

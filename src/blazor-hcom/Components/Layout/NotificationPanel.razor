@@ -1,30 +1,111 @@
+@*
+    NotificationPanel.razor - Container for system-wide toast notifications.
+
+    Features:
+    - Dynamic Message Rendering: Iterates through Messages to spawn Toast components.
+    - Child Orchestration: Maintains 'ToastRef' dictionary for direct child method calls[cite: 9, 11].
+    - State Persistence: Tracks 'HiddenMessageIds' to allow restoring dismissed alerts[cite: 9, 10].
+    - Active Heartbeat: Uses PeriodicTimer to force UI refreshes while idle, ensuring 
+      "Time Ago" labels in ToastHeader stay accurate[cite: 1, 4].
+
+    Maintenance Notes:
+    - Ensure CancellationTokenSource is disposed to prevent background timer leaks.
+    - Timer frequency should balance UI responsiveness with CPU efficiency.
+ *@
+
 @using blazor_hcom.Classes
+@using System.Threading
+@inject IMessageService NotifySrvs
+@implements IAsyncDisposable
 
 @namespace blazor_hcom.Components.Layout
 
-<div class="toast-container position-fixed top-0 end-0 mt-5 p-3" id="notification-panel">
+<div class="toast-container position-fixed bottom-0 end-0 mb-5 p-3" id="notification-panel" style="overflow-y: auto; max-height: 80vh;">
 
 @if(Messages!.Count < 1)
 {<p class="alert alert-info">You have no messages</p> }
 
 else
 {	
-	@foreach (var msg in Messages)
-	{
-		<div class="mb-1">
-			<Toast Message="@msg" AutoHide="false" />
-		</div>
-	}
-		<button class="btn btn-danger btn-sm ms-auto"
-				style="pointer-events: true;"
-				@onclick="OnClearAll" title="Clear Messages">
-			<i class="fas fa-trash"></i>
+    @foreach (var msg in Messages)
+    {
+	<div class="mb-1">
+	    <Toast
+		Message="@msg" 
+		Register="RegisterToast"
+		OnDeleted="NotifySrvs.RemoveMessage"
+		OnHidden="()=>CollectHiddenIds(msg.Id)"
+		CurrentTime="@Now"
+	    />
+	</div>
+    }
+    <div class="d-flex justify-content-end mt-2" style="pointer-events: auto;">
+	<div class="btn-group">
+	    @if (HiddenMessageIds.Count > 0) {
+		<button class="btn btn-success btn-sm"
+		    @onclick="ShowHidden" title="Show Hidden Messages">
+		    <i class="fas fa-envelope"></i>
 		</button>
+	    }
+	    <button class="btn btn-danger btn-sm"
+			   @onclick="OnClearAll" title="Clear Messages">
+		<i class="fas fa-trash"></i> 
+	    </button>
+	</div>
+    </div>
 }
 </div>
 
 @code {
-	[Parameter] public IReadOnlyList<AppMessage>? Messages { get; set; }
-	[Parameter] public EventCallback OnClearAll { get; set; }
-	private void OnClearAllHandler() => OnClearAll.InvokeAsync();
+    [Parameter] public IReadOnlyList<AppMessage>? Messages { get; set; }
+    [Parameter] public EventCallback OnClearAll { get; set; }
+    private Dictionary<Guid, Toast> ToastRef { get; set; } = new();
+    private async Task OnClearAllHandler() => await OnClearAll.InvokeAsync();
+    private List<Guid> HiddenMessageIds { get; set; } = new ();
+    private DateTime Now => DateTime.UtcNow;
+    private void CollectHiddenIds(Guid id) {
+	HiddenMessageIds.Add(id);
+    }
+    private async Task ShowHidden() {
+	// Clone the HiddenMessageIds and loop over its members
+	foreach (var id in HiddenMessageIds.ToList()) {
+	    // Show the hidden message.
+	    await ToastRef[id].Show();
+	    // Initiate re-render
+	    await InvokeAsync(StateHasChanged);
+	}
+	HiddenMessageIds.Clear();
+    }
+    private void RegisterToast(Guid id, Toast toast)
+    {
+	ToastRef[id] = toast;
+    }
+    private readonly CancellationTokenSource _timercts = new();
+
+    protected override async Task OnInitializedAsync () {
+	_ = RunPeriodicTimerUpdate();
+	await Task.CompletedTask;
+    }
+    private async Task RunPeriodicTimerUpdate () {
+	using PeriodicTimer timer = new PeriodicTimer(TimeSpan.FromSeconds(30));
+
+	try {
+	    while (await timer.WaitForNextTickAsync(_timercts.Token))
+	    {
+		if (Messages?.Count > 0 || HiddenMessageIds.Count > 0)
+		{
+		    foreach (var toast in ToastRef.Values) { await toast.Refresh(); }
+		    await InvokeAsync(StateHasChanged);
+		}
+	    }
+	}
+	catch (OperationCanceledException) {}
+    }
+
+    public async ValueTask DisposeAsync()
+    {
+	_timercts.Cancel();
+	_timercts.Dispose();
+	await ValueTask.CompletedTask;
+    }
 }
