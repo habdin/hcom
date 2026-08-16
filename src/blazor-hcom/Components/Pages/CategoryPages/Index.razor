@@ -1,0 +1,62 @@
+@*
+   Index.razor - Main entry point for listing and managing {{EntityPlural}}.
+
+   Features:
+   - Interface toggling (Card/Table)
+   - Searching functionality
+   - Data loading from EF Core context
+   - CRUD operations via a reusable Modal component.
+
+   This file is responsible only for composing the UI.
+   The implementation details are delegated to the corresponding
+   partial class files.
+*@
+
+@page "/categories"
+@* Model namespace will be inserted *@
+@using blazor_hcom.Models.Dummy2
+@using Microsoft.EntityFrameworkCore
+
+@* Page namespace will be inserted *@
+@namespace blazor_hcom.Components.Pages.CategoryPages
+
+@* Insert The page title. This appears in the browser title bar. *@
+<AppTitle Title="Category Index" />
+
+@* Insert the Heading and Toolbar for the App Index Page *@
+<div class="d-flex justify-content-between align-items-stretch pt-5 ">
+	<h2 class="display-5 mt-4 flex-grow-1">List of Categories</h2>
+
+	<Toolbar SearchString="@SearchHandler"
+			 ViewToggled="@HandleToggleView"
+			 OnAddNew="HandleCreate" />
+</div>
+
+@* Insert a line just below the Heading and Toolbar *@
+<hr class="mb-3">
+
+@* Insert the actual data component for the App *@
+<DataDisplay TEntity="Category"
+			 Items="@Items"
+			 IsLoading="@IsLoading"
+			 IsTable="@ViewAsTable"
+			 OnUpdateRecord="HandleUpdate"
+			 OnDeleteRecord="HandleDelete"
+			 OnDetailsRecord="HandleRead"
+/>
+
+@* Insert the Modal for the App. This is actually hidden and appears through events. *@
+<Modal @ref="_myModalRef"
+	   TEntity="Category"
+	   Fading="true"
+	   Operation="@CrudOperation"
+	   Title="@ModalTitle"
+	   FormContent="@(MainForm(CrudOperation))"
+	   BtnSubmitText="@ModalSubmitBtnText"
+	   OnVisibilityChanged="@HandleModalVisibility"
+	   Size="Modal<Category>.ModalSize.ExtraLarge"
+	   Backdrop="Modal<Category>.ModalBackdrop.Static"
+	   BackDropClick="HandleBackdropClick"
+	   OnSubmit="(() => HandleSubmit(Item, CrudOperation))"
+	   OnClose="ModalHideAsync"
+/>

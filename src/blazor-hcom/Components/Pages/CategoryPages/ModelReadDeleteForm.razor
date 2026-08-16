@@ -1,0 +1,25 @@
+@* Change the namespace for the Model as required *@
+@using blazor_hcom.Models.Dummy2
+
+@* Change the namespace for the App as required *@
+@namespace blazor_hcom.Components.Pages.CategoryPages
+
+@if (Operation == "delete")
+{
+	<p class="alert alert-danger"> Do you want to delete this record?</p>
+}
+
+	<dl class="row">
+		<dt class="col-sm-3">Id</dt>
+		<dd class="col-sm-9">@Category!.Id</dd>
+		<dt class="col-sm-3">Name</dt>
+		<dd class="col-sm-9">@Category!.Name</dd>
+	</dl>
+
+@code {
+	[Parameter]
+	public Category? Category { get; set; }
+
+	[Parameter]
+	public string? Operation { get; set; }
+}
