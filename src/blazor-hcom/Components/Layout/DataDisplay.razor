@@ -24,6 +24,8 @@
 *@
 
 @using System.Reflection
+@using System.ComponentModel.DataAnnotations
+@namespace blazor_hcom.Components.Layout
 @typeparam TEntity
 
 @if (IsLoading)
@@ -33,15 +35,15 @@
 
 else if (Items is null || !Items.Any())
 {
-	<p class="alert alert-info">
-		There are no records. Please add one.
-	</p>
+    <p class="alert alert-info">
+	There are no records. Please add one.
+    </p>
 }
 
 else
 {
-	@if (IsTable)
-	{
+    @if (IsTable)
+    {
 	@*
 	   Table Layout for displaying TEntity items 
 
@@ -50,180 +52,184 @@ else
 	   2- Or Display a data warning message that there no items exist, prompting the user to add
 	   some data.
 	*@	
-		<table class="table table-hover table-striped my-3 py-3">
-			<thead class="table-primary">
-				<tr>
-					@foreach (var prop in typeof(TEntity).GetProperties() )
-					{
-						@if(prop.Name.ToLower() == "id")
-						{ continue; }
-						<th>@prop.Name</th> 
-					}
-					<th>Actions</th>
-				</tr>
-			</thead>
-			<tbody>
-				@foreach (var item in Items!)
+	<table class="table table-hover table-striped my-3 py-3">
+	    <thead class="table-primary">
+		<tr>
+		@foreach (var prop in typeof(TEntity).GetProperties() )
+		{
+		    @if (prop.Name.ToLower() == "id" || prop.GetCustomAttribute<DisplayAttribute>()?.GetAutoGenerateField() == false)
+		    { continue; }
+		    <th>@GetDisplayName(prop)</th> 
+		}
+		    <th>Actions</th>
+		</tr>
+	    </thead>
+	    <tbody>
+		@foreach (var item in Items!)
+		{
+		    <tr>
+			@foreach (var prop in typeof(TEntity).GetProperties())
+			{
+			    @if (prop.Name.ToLower() == "id" || prop.GetCustomAttribute<DisplayAttribute>()?.GetAutoGenerateField() == false)
+			    { continue; }
+			    <td>
+				@if (prop.Name.ToLower() == "name") 
 				{
-					<tr>
-						@foreach (var prop in typeof(TEntity).GetProperties())
-						{
-							@if (prop.Name.ToLower() == "id")
-							{
-								continue;
-							}
-
-							<td>
-								@if (prop.Name.ToLower() == "name")
-								{
-									<a class="text-decoration-none" 
-										role="link" style="cursor: pointer;"
-										title="@GetTitle(item!)'s Details"
-										@onclick="() => HandleDetailsBtnClicked(item!)">
-										@GetTitle(item!)
-									</a>
-								}
-								else 
-								@GetValue(item!, prop)
-							</td>
-						}
-						<td>
-							<UDbuttons
-								TEntity = "TEntity"
-								Item = "@( (TEntity) item)"
-								Title = "@($"{EntityName} {GetTitle(item!)}")"
-								OnEdit = "@( (TEntity item) => HandleUpdateBtnClicked(item!))"
-								OnDelete="@( (TEntity item) => HandleDeleteBtnClicked(item!))"
-								/>
-						</td>
-					</tr>
+				    <a class="text-decoration-none" 
+					role="link" style="cursor: pointer;"
+					title="@GetTitle(item!)'s Details"
+					@onclick="() => HandleDetailsBtnClicked(item!)">
+					@GetTitle(item!)
+				    </a>
 				}
-			</tbody>
-		</table>
-
-	}
-	else
-	{
+				else 
+				@GetDisplayValue(item!, prop)
+			    </td>
+			}
+			    <td>
+				<UDbuttons TEntity = "TEntity"
+				    Item = "@( (TEntity) item)"
+				    Title = "@($"{EntityName} {GetTitle(item!)}")"
+				    OnEdit = "@( (TEntity item) => HandleUpdateBtnClicked(item!))"
+				    OnDelete="@( (TEntity item) => HandleDeleteBtnClicked(item!))" />
+			    </td>
+			</tr>
+		}
+	    </tbody>
+	</table>
+    }
+    else
+    {
 	@*
 	   Card Layout for displaying TEntity items 
 
 	   Briefly the layout has the following flow:
 	   1- Display items as cards when data items exist.
-	   2- Or Display a data warning message that there no items exist, prompting the user to add
-	   some data.
+	   2- Or Display a data warning message that there no items exist, prompting the user to add some data.
 	*@	
-		<div class="row my-3 py-3" id="cardView">
-			@foreach (var item in Items!)
-			{
-				<div class="col-md-6 col-sm-12">
-					<div class="card mb-3 shadow-sm">
-						<div class="card-header">
-							<h5 class="card-title text-decoration-none">
-								<a class="text-decoration-none" 
-								role="link" style="cursor: pointer;"
-								title="@GetTitle(item!)'s Details"
-								@onclick="() => HandleDetailsBtnClicked(item!)">
-									@GetTitle(item!)
-								</a>
-							</h5>
-						</div>
-						<div class="card-body">
-							<div class="row">
-								@foreach (var prop in typeof(TEntity).GetProperties())
-								{
-								if (prop.Name.ToLower() == "id")
-								{ continue; }
-								<dt class="col-4">@prop.Name</dt>
-								<dd class="col-8">@GetValue(item!, prop)</dd>
-								}
-							</div>
-							<!-- <input type="hidden" name="Id" value="@GetIdValue(item!)"> -->
-						</div>
-						<div class="card-footer">
-							<UDbuttons
-								TEntity="TEntity"
-								Item = "@( (TEntity) item)"
-								Title = "@($"{EntityName} {GetTitle(item!)}")"
-								OnEdit = "@( (TEntity item) => HandleUpdateBtnClicked(item!))"
-								OnDelete="@( (TEntity item) => HandleDeleteBtnClicked(item!))"
-								/>
-						</div>
-					</div>
+	<div class="row my-3 py-3" id="cardView">
+	    @foreach (var item in Items!)
+		{
+		    <div class="col-md-6 col-sm-12">
+			<div class="card mb-3 shadow-sm">
+			    <div class="card-header">
+				<h5 class="card-title text-decoration-none">
+				    <a class="text-decoration-none" 
+					role="link" style="cursor: pointer;"
+					title="@GetTitle(item!)'s Details"
+					@onclick="() => HandleDetailsBtnClicked(item!)">
+					    @GetTitle(item!)
+				    </a>
+				</h5>
+			    </div>
+			    <div class="card-body">
+				<div class="row">
+				    @foreach (var prop in typeof(TEntity).GetProperties())
+				    {
+					@if (prop.Name.ToLower() == "id" || prop.GetCustomAttribute<DisplayAttribute>()?.GetAutoGenerateField() == false)
+					{ continue; }
+					<dt class="col-4">@GetDisplayName(prop)</dt>
+					<dd class="col-8">@GetDisplayValue(item!, prop)</dd>
+				    }
 				</div>
-				}
-		</div>
+							<!-- <input type="hidden" name="Id" value="@GetIdValue(item!)"> -->
+			    </div>
+			    <div class="card-footer">
+				<UDbuttons TEntity="TEntity"
+					Item = "@( (TEntity) item)"
+					Title = "@($"{EntityName} {GetTitle(item!)}")"
+					OnEdit = "@( (TEntity item) => HandleUpdateBtnClicked(item!))"
+					OnDelete="@( (TEntity item) => HandleDeleteBtnClicked(item!))" />
+			    </div>
+			</div>
+		    </div>
+		}
+	    </div>
 	}
 }
 
 @code
 {
-	/// <summary>
+    /// <summary>
     /// The name of the entity type, used in titles and tooltips.
     /// </summary>
-	private string EntityName = typeof(TEntity).Name;
+    private string EntityName = typeof(TEntity).Name;
+    
+    private string GetDisplayName(PropertyInfo prop)
+    {
+	var display = prop.GetCustomAttribute<DisplayAttribute>();
+	return display?.GetName() ?? prop.Name;
+    }
 	
-	/// <summary>
+    /// <summary>
     /// Helper to extract a value from a given property using reflection.
     /// </summary>
-	private object? GetValue(object item, PropertyInfo prop)
+    private object? GetDisplayValue(object item, PropertyInfo prop)
     {
-        return prop.GetValue(item);
+	if (prop.PropertyType.IsPrimitive || prop.PropertyType == typeof(string))
+	{
+            return prop.GetValue(item!);
+	}
+	
+	var depEntity = prop.GetValue(item);
+	
+	return depEntity is not null ? GetTitle(depEntity) : "Untitled";
     }
 
-	/// <summary>
+    /// <summary>
     /// Gets the "Name" property of an entity for use in UI titles.
     /// Returns "Untitled" if not found or null.
     /// </summary>
     private string GetTitle(object item)
     {
-        var nameProp = typeof(TEntity).GetProperty("Name");
+        var nameProp = item!.GetType().GetProperty("Name");
         return nameProp?.GetValue(item)?.ToString() ?? "Untitled";
     }
 
-	/// <summary>
-	/// Shows Loading when data are remotely being loaded.
-	/// </summary>
-	[Parameter]
-	public bool IsLoading { get; set; }
+    /// <summary>
+    /// Shows Loading when data are remotely being loaded.
+    /// </summary>
+    [Parameter]
+    public bool IsLoading { get; set; }
 
-	/// <summary>
+    /// <summary>
     /// Determines if data is rendered as a table or cards.
     /// </summary>
-	[Parameter]
-	public bool IsTable { get; set; } = false;
+    [Parameter]
+    public bool IsTable { get; set; } = false;
 
-	/// <summary>
+    /// <summary>
     /// The name of the entity type, used in titles and tooltips.
     /// </summary>
-	[Parameter]
-	public List<TEntity> Items { get; set; } = new();
+    [Parameter]
+    public List<TEntity> Items { get; set; } = new();
 
-	/// <summary>
+    /// <summary>
     /// Event callback for handling edit button.
     /// </summary>	
-	[Parameter]
-	public EventCallback<TEntity> OnUpdateRecord { get; set; }
-	private async Task HandleUpdateBtnClicked(TEntity item)
-	{
-		await OnUpdateRecord.InvokeAsync(item);
-	}
+    [Parameter]
+    public EventCallback<TEntity> OnUpdateRecord { get; set; }
+    private async Task HandleUpdateBtnClicked(TEntity item)
+    {
+	await OnUpdateRecord.InvokeAsync(item);
+    }
 
-	/// <summary>
+    /// <summary>
     /// Event callback for handling delete button.
     /// </summary>
-	[Parameter]
-	public EventCallback<TEntity> OnDeleteRecord { get; set;}
-	private async Task HandleDeleteBtnClicked(TEntity item)
-	{
-		await OnDeleteRecord.InvokeAsync(item);
-	}
+    [Parameter]
+    public EventCallback<TEntity> OnDeleteRecord { get; set;}
+    private async Task HandleDeleteBtnClicked(TEntity item)
+    {
+	    await OnDeleteRecord.InvokeAsync(item);
+    }
 
-	/// <summary>
+    /// <summary>
     /// Event callback for handling details link.
     /// </summary>
-	[Parameter]
-	public EventCallback<TEntity> OnDetailsRecord { get; set; }
-	private async Task HandleDetailsBtnClicked(TEntity item) {
-		await OnDetailsRecord.InvokeAsync(item);
-	}
+    [Parameter]
+    public EventCallback<TEntity> OnDetailsRecord { get; set; }
+    private async Task HandleDetailsBtnClicked(TEntity item) {
+	    await OnDetailsRecord.InvokeAsync(item);
+    }
 }
