@@ -1,0 +1,25 @@
+@using blazor_hcom.Models.Dummy2
+
+@namespace blazor_hcom.Components.Pages.Dummy2Pages
+
+@if (Operation == "delete")
+   {
+   <p class="alert alert-danger"> Do you want to delete this record?</p>
+   }
+
+
+<dl class="row">
+
+    <dt class="col-sm-3">Name</dt>
+    <dd class="col-sm-9">@Dummy2!.Name</dd>
+    <dt class="col-sm-3">Category</dt>
+    <dd class="col-sm-9">@Dummy2!.Category!.Name</dd>
+</dl>
+
+@code {
+    [Parameter]
+    public Dummy2? Dummy2 { get; set; }
+
+    [Parameter]
+    public string? Operation { get; set; }
+}
