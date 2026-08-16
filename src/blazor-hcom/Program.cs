@@ -1,6 +1,14 @@
-using blazor_hcom.Components;
+// EF Core infrastructure:
+// DbContextFactory<T>, SQLite provider, database configuration.
 using Microsoft.EntityFrameworkCore;
-using Microsoft.Extensions.DependencyInjection;
+
+// Root HCOM UI component (App.razor).
+using blazor_hcom.Components;
+
+// Implicit Dependency injection imports exist so the import is commented.
+// using Microsoft.Extensions.DependencyInjection;
+
+// HCOM application services (notifications, UI state, etc.).
 using blazor_hcom.Services;
 
 var builder = WebApplication.CreateBuilder(args);
