@@ -1,0 +1,32 @@
+@* Change the namespace for the Model as required *@
+@using blazor_hcom.Models
+
+@* Change the namespace for the App as required *@
+@namespace blazor_hcom.Components.Pages.DummyPages
+
+@if (Operation == "delete")
+{
+	<p class="alert alert-danger"> Do you want to delete this record?</p>
+}
+
+	<dl class="row">
+		<!-- Add extra field dt and dd as needed -->
+
+		<!-- Change the label as required -->
+		<dt class="col-sm-3">Name</dt>
+		<!-- Change the Model class as required -->
+		<dd class="col-sm-9">@Dummy!.Name</dd>
+		<!-- Change the label as required -->
+		<dt class="col-sm-3">Category</dt>
+		<!-- Change the Model class as required -->
+		<dd class="col-sm-9">@Dummy!.Category</dd>
+	</dl>
+
+@code {
+	// Change the Model Entity class as needed.
+	[Parameter]
+	public Dummy? Dummy { get; set; }
+
+	[Parameter]
+	public string? Operation { get; set; }
+}
