@@ -96,17 +96,6 @@ All interaction rules are enforced in C#, not CSS or JavaScript.
 
 -------------------------------------------------------------------------------
 
-Content & Staging
------------------
-The modal supports multi-stage workflows via ModalStage:
-
-• MainForm
-• DependentForm
-
-Content is injected using RenderFragment parameters, allowing the parent
-component to control form composition without the modal knowing domain details.
-
--------------------------------------------------------------------------------
 
 Public API (Conceptual)
 -----------------------
@@ -117,9 +106,7 @@ Parameters:
 • BtnSubmitText             — Submit button label
 • Size                      — ModalSize enum
 • Backdrop                  — ModalBackdrop enum
-• Stage                     — ModalStage enum
-• MainFormContent           — Primary form fragment
-• DependentFormContent      — Dependent form fragment
+• FormContent               — Primary form fragment
 • OnSubmit                  — Submit action callback
 • OnClose                   — Close intent callback
 • OnVisibilityChanged(bool) — Visibility notification hook
@@ -161,35 +148,33 @@ End of Modal<TEntity> documentation
   - Event Flow: Used stopPropagation on .modal-dialog to isolate internal 
     clicks from the dismissal logic.
 *@
-<div class="modal @(Fading ? "fade" : "") @(IsShown ? "show" : "")"
-	 tabindex="@(IsVisible ? "0" : "-1")"
-	 id="theModal"
-	 @ref="_modalRoot"
-	 @onkeydown="HandleKeyDown"
-	 @onclick="HandleBackdropClicked"
-	 style="@(IsVisible ? "display: block;" : "display: none;")">
+<div class="modal @(Fading ? "fade" : "") @(IsShown ? "show" : "")" 
+    tabindex="@(IsVisible ? "0" : "-1")"
+    id="theModal"
+    @ref="_modalRoot"
+    @onkeydown="HandleKeyDown"
+    @onclick="HandleBackdropClicked"
+    style="@(IsVisible ? "display: block;" : "display: none;")">
 	<div class="modal-dialog @ModalSizeClass" @onclick:stopPropagation="true">
-		<div class="modal-content">
-			<div class="modal-header">
-				<h3 class="modal-title" id="theModalTitle">@Title</h3>
-				<button class="btn btn-close" @onclick="OnClose"></button>
-			</div>
-			<div class="modal-body">
-				@if (Stage == ModalStage.MainForm) {
-					@MainFormContent
-				}
-				else if (Stage == ModalStage.DependentForm) {
-					@DependentFormContent
-				}
-			</div>
-			<div class="modal-footer">
-				@if(Operation != "read"){
-					<button class="btn btn-secondary rounded-pill" type="button"
-						@onclick="OnClose" id="theModalButtonCancel ">Cancel</button>
-				}
-				<button class="btn btn-primary rounded-pill" type="button"
-							   id="theModalButtonSubmit" @onclick="OnSubmit">@BtnSubmitText</button>
-			</div>
+	    <div class="modal-content">
+		<div class="modal-header">
+		    <h3 class="modal-title" id="theModalTitle">@Title</h3>
+		    <button class="btn btn-close" @onclick="OnClose"></button>
 		</div>
+		<div class="modal-body"> @FormContent </div>
+		<div class="modal-footer"> 
+		    @if(Operation != "read")
+		    {
+		    <button class="btn btn-secondary rounded-pill" type="button"
+			    @onclick="OnClose" id="theModalButtonCancel ">
+			Cancel
+		    </button>
+			    }
+		    <button class="btn btn-primary rounded-pill" type="button"
+			    id="theModalButtonSubmit" @onclick="OnSubmit">
+			@BtnSubmitText
+		    </button>
+		</div>
+	    </div>
 	</div>
 </div>
