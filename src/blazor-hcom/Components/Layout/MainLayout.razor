@@ -9,26 +9,29 @@
 	<SectionOutlet SectionName="PageTitle" />
 </HeadContent>
 
-<NavMenu NotificationToggle="ToggleNotificationPanel" />
 
-<div style="@(IsPanelVisible ? "display: block;" : "display: none;")">
-	<NotificationPanel Messages="Messages" OnClearAll="()=>NotifySrvs.ClearAllMessages()" />
+<div class="d-flex flex-column min-vh-100">
+	<NavMenu NotificationToggle="ToggleNotificationPanel" />
+
+	<div style="@(IsPanelVisible ? "display: block;" : "display: none;")">
+		<NotificationPanel Messages="Messages" OnClearAll="()=>NotifySrvs.ClearAllMessages()" />
+	</div>
+
+	<div class="container flex-grow-1 @(UiStateSrvs.ModalOpen ? "modal-open" : null)"
+		style="@(UiStateSrvs.ModalOpen ? "overflow: hidden;" : null)">
+		<main>
+			<article class="content">
+				@Body
+			</article>
+		</main>
+	</div>
+
+	<footer class="bg-primary text-light p-3">
+		<div class="container-fluid">
+			<a href="" class="nav-link">HCOM</a>
+		</div>
+	</footer>
 </div>
-
-<div class="container @(UiStateSrvs.ModalOpen ? "modal-open" : null)"
-     style="@(UiStateSrvs.ModalOpen ? "overflow: hidden;" : null)">
-    <main>
-        <article class="content">
-            @Body
-        </article>
-    </main>
-</div>
-
-<footer class="bg-primary text-light p-3 fixed-bottom">
-    <div class="container-fluid">
-        <a href="" class="nav-link">HCOM</a>
-    </div>
-</footer>
 
 @code 
 {

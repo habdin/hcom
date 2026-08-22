@@ -18,7 +18,11 @@
 
 	<Search SearchString="@SearchString" />
 	
-	<select id="items_amount_select" class="form-select form-select-sm shadow-sm toolbar-page-size" title="Amount of Entries displayed" @onchange="HandlePageAmountChanged">
+	<select id="items_amount_select" 
+		class="form-select form-select-sm shadow-sm toolbar-page-size" 
+		title="Amount of Entries displayed" 
+		value="@PageSize"
+		@onchange="HandlePageAmountChanged">
 		<option value="10">10</option>
 		<option value="25">25</option>
 		<option value="50">50</option>
@@ -48,6 +52,7 @@
 	[Parameter] public EventCallback<string> SearchString { get; set; }
 	
 	// Code for Paginator Amount Selector
+	[Parameter] public int PageSize { get; set; }
 	[Parameter] public EventCallback<int> PageAmount { get; set; }
 	private async Task HandlePageAmountChanged(ChangeEventArgs e)
 	{

@@ -26,22 +26,36 @@
 	<h2 class="display-5 mt-4 flex-grow-1">List of Dummies 2</h2>
 
 	<Toolbar SearchString="@SearchHandler"
-	   ViewToggled="@HandleToggleView"
-	   OnAddNew="HandleCreate" />
+		 PageSize="@PageSize"
+		 PageAmount="@PageAmountChangedHandler"
+		 ViewToggled="@HandleToggleView"
+		 OnAddNew="HandleCreate" />
 </div>
 
 @* Inserts a line just below the Heading and Toolbar *@
 <hr class="mb-3">
 
 @* Inserts the actual data component for the Dummy2 App *@
-<DataDisplay TEntity="Dummy2"
-			 Items="@Items"
-			 IsLoading="@IsLoading"
-			 IsTable="@ViewAsTable"
-			 OnUpdateRecord="HandleUpdate"
-			 OnDeleteRecord="HandleDelete"
-			 OnDetailsRecord="HandleRead"
-/>
+    <DataDisplay TEntity="Dummy2"
+			    Items="@Items"
+			    IsLoading="@IsLoading"
+			    IsTable="@ViewAsTable"
+			    OnUpdateRecord="HandleUpdate"
+			    OnDeleteRecord="HandleDelete"
+			    OnDetailsRecord="HandleRead"
+    />
+
+<div class="pb-5">
+	@if(@_totalPages > 1)
+	{
+		<Paginator TotalPages="@_totalPages"
+			CurrentPage="@_currentPage"
+			TotalRecords="@_totalRecords"
+			PageSize="@PageSize"
+			PageLinkClicked="PagerLinkClickHandler"
+		/>
+	}
+</div>
 
 @* Inserts the Modals for the App. These are actually hidden and appear through events. *@
 <Modal @ref="_dummy2ModalRef"
