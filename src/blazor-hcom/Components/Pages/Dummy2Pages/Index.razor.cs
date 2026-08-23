@@ -22,16 +22,14 @@ public partial class Index : ComponentBase, IAsyncDisposable
 	// Inject HCOM UiStateService 
 	[Inject] UiStateService UiStateSrvs { get; set; } = default!;
 
-	// Define context for the App.
+	// Define db context for the App.
 	private TestContext context = default!;
-	// Define App for EditContext.
-	// It is pushed in this component since it is a general purpose component partial file
-	// Created as public since it will be used elsewhere in the project
-	// Single Item record for the target model.
+
+	// Single Item record for the target models.
 	public Dummy2 Item { get; set; } = new Dummy2();
 	public Category CategoryItem { get; set; } = new Category();
 
-	// for the Modal and CRUD as well as for the forms inside them.
+	// Define form EditContexts for the existing Model instances
 	public EditContext? editcontext { get; set; }
 	public EditContext? categoryEditContext { get; set; }
 
@@ -182,7 +180,6 @@ public partial class Index : ComponentBase, IAsyncDisposable
 		}
 		await LoadItemsAsync();
 		await LoadCategoryItemsAsync();
-		StateHasChanged();
 	}
 
 	// Uncomment DisposeAsync method

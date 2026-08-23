@@ -13,7 +13,6 @@
 *@
 
 @page "/categories"
-@* Model namespace will be inserted *@
 @using blazor_hcom.Models.Dummy2
 @using Microsoft.EntityFrameworkCore
 
@@ -28,6 +27,8 @@
 	<h2 class="display-5 mt-4 flex-grow-1">List of Categories</h2>
 
 	<Toolbar SearchString="@SearchHandler"
+			 PageSize="@PageSize"
+			 PageAmount="@PageAmountChangedHandler"
 			 ViewToggled="@HandleToggleView"
 			 OnAddNew="HandleCreate" />
 </div>
@@ -45,6 +46,17 @@
 			 OnDetailsRecord="HandleRead"
 />
 
+<div class="pb-5">
+	@if(@_totalPages > 1)
+	{
+		<Paginator TotalPages="@_totalPages"
+			CurrentPage="@_currentPage"
+			TotalRecords="@_totalRecords"
+			PageSize="@PageSize"
+			PageLinkClicked="PagerLinkClickHandler"
+		/>
+	}
+</div>
 @* Insert the Modal for the App. This is actually hidden and appears through events. *@
 <Modal @ref="_myModalRef"
 	   TEntity="Category"
