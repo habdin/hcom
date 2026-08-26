@@ -15,8 +15,6 @@ var builder = WebApplication.CreateBuilder(args);
 
 builder.Services.AddDbContextFactory<TestContext>(options =>
     options.UseSqlite(builder.Configuration.GetConnectionString("TestContext") ?? throw new InvalidOperationException("Connection string 'TestContext' not found.")));
-builder.Services.AddQuickGridEntityFrameworkAdapter();
-builder.Services.AddDatabaseDeveloperPageExceptionFilter();
 
 builder.Services.AddScoped<IMessageService, NotificationService>();
 builder.Services.AddScoped<UiStateService>();
