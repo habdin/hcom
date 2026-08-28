@@ -2,7 +2,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.AspNetCore.Components.Forms;
 using Microsoft.AspNetCore.Components;
-using blazor_hcom.Models.Dummy2;
+using blazor_hcom.Models;
 using blazor_hcom.Services;
 
 namespace blazor_hcom.Components.Pages.Dummy2Pages;

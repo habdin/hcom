@@ -1,7 +1,7 @@
 using Microsoft.EntityFrameworkCore;
 using Microsoft.AspNetCore.Components.Forms;
 using Microsoft.AspNetCore.Components;
-using blazor_hcom.Models.Dummy2;
+using blazor_hcom.Models;
 using blazor_hcom.Services;
 
 // Change the namespace for the App as required

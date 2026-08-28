@@ -1,7 +1,7 @@
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 
-namespace blazor_hcom.Models.Dummy2;
+namespace blazor_hcom.Models;
 
 public class Category
 {

@@ -5,7 +5,6 @@ using System.Threading.Tasks;
 using Microsoft.EntityFrameworkCore;
 
 using blazor_hcom.Models;
-using blazor_hcom.Models.Dummy2;
 
 public class TestContext : DbContext
 {
