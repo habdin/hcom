@@ -17,7 +17,7 @@
 		<NotificationPanel Messages="Messages" OnClearAll="()=>NotifySrvs.ClearAllMessages()" />
 	</div>
 
-	<div class="container flex-grow-1 @(UiStateSrvs.ModalOpen ? "modal-open" : null)"
+	<div class="container-fluid flex-grow-1 @(UiStateSrvs.ModalOpen ? "modal-open" : null)"
 		style="@(UiStateSrvs.ModalOpen ? "overflow: hidden;" : null)">
 		<main>
 			<article class="content">
