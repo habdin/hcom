@@ -53,12 +53,18 @@ The foundation layer demonstrates the **core architectural primitives** that sup
    - Forms are **stateless and purely presentational**; the Modal handles all **submit and CRUD logic**.
    - Pages host **module-specific content only**, keeping interaction logic centralized and reusable.
 
-3. **Data Presentation Layer:**
+3- **Dependent Tables & Interchanging Modal State Orchestration:**
+   - **Problem Solved:** Standard scaffolded applications force users to abandon their current form and navigate away to a separate page whenever a required foreign key entry is missing.
+   - **Zero Context Loss:** When a missing relational entry is encountered, HCOM spawns a secondary modal layer directly over the active workflow without triggering page reloads or discarding in-progress inputs.
+   - **Seamless Return:** Once the dependent entity is saved, control immediately returns to the primary form with the newly created foreign key populated.
+   - **Pure C# Orchestration:** Inter-modal events and component swapping are handled entirely via C# event callbacks and layout state control.
+
+4. **Data Presentation Layer:**
    - Data display is encapsulated in a **DataDisplay component**, supporting **dynamic card/table interaction**.
    - Component is **expandable** for future layouts or features.
    - Separation ensures **flexibility and maintainability**, even if currently spread across placeholders.
 
-4. **Toolbar / Index / Notifications:**
+5. **Toolbar / Index / Notifications:**
    - Toolbar provides:
      - **Filtering** (Implemented)
      - **Paging** (Implemented)
@@ -66,33 +72,32 @@ The foundation layer demonstrates the **core architectural primitives** that sup
      - **New record addition** via modal CRUD
    - Currently implemented in **Layout placeholders**, to be unified into a **single SPA-like workflow** per module.
 
-5. **Search & Filtering:**
+6. **Search & Filtering:**
    - Current state is **filtering only**.
    - Central/global search is **under investigation**, with Blazor implementation separating search logic to allow **per-component or future global search**.
 
-6. **Paging Ability:**
+7. **Paging Ability:**
    - Currently implemented and wired to each entity index and globally to the Toolbar.
 
-7. **Modules: Architecture and Design**
+8. **Modules: Architecture and Design**
    - True modules for the project are **not yet implemented**, but all foundational elements are designed to support **pluggable modules** in the future.
 .   - Each module will eventually include patient, worker (HR), and financial sub-areas, leveraging shared identity models and reusable components.
 
-8. **Blazor Layout & Component Architecture:**
+9. **Blazor Layout & Component Architecture:**
    - Components are separated into **Layout (shared UI logic) and Pages**.
    - The Layout hosts the **core interaction primitives**: Modal CRUD, Toolbar, NotificationPanel/Toast, DataDisplay, NavMenu, ToastHeader.
    - This design ensures **consistent behavior, SPA-native integration, and maintainable shared components**.
    - **No pre-made Bootstrap components are used**, keeping the SPA fully under custom control.
 
-9. **Test Project:**
+10. **Test Project:**
    - HCOM includes a **dedicated test project** for validating core functionality.
    - Tests cover **Modal CRUD interactions, DataDisplay behavior, and Layout-hosted components**.
    - Ensures **basic correctness, consistency, and maintainability** as new modules and features are added.
    - Testing will **expand alongside modularity and domain-specific functionality**.
 
-10. **SPA Considerations:**
+11. **SPA Considerations:**
     - Some UI elements (e.g., Bootstrap menus) are being refined for SPA compliance, but full SPA integration is **future work**.
 
-**Note:** All development has been performed by a **solo developer**, highlighting full-stack, architectural, and design-level reasoning.
 
 ---
 
@@ -121,7 +126,6 @@ HCOM is designed to eventually support **full healthcare operations**, including
 - **Pluggable Composition (Planned):** Modules will be dynamically composable once modularity is implemented.
 - **Separation of Concerns:** Interaction primitives, data display, toolbar, modal, and notifications are centralized in the Layout; Pages remain module-specific and dumb.
 - **Scalability & Flexibility:** DataDisplay component, filtering, paging, and toolbar designed to scale with module complexity.
-- **Solo Developer Context:** Entire system is built by one developer, demonstrating end-to-end design and architectural reasoning.
 
 ---
 ## Status and Roadmap
@@ -182,4 +186,4 @@ dotnet test tests/HCOM.Tests
 
 HCOM is **not just a CRUD demo** — it is a **foundation-first, composable healthcare management platform in staged development**.
 
-By focusing on **Layout-hosted shared components, dumb page forms, reusable interaction primitives, planned modularity, and solo developer design**, HCOM demonstrates a professional architectural approach and prepares the system to scale from a single department to complex multi-unit healthcare organizations.
+By focusing on **Layout-hosted shared components, dumb page forms, reusable interaction primitives, planned modularity**, HCOM demonstrates a professional architectural approach and prepares the system to scale from a single department to complex multi-unit healthcare organizations.
