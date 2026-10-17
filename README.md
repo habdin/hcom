@@ -56,7 +56,7 @@ The foundation layer demonstrates the **core architectural primitives** that sup
 3. **Dependent Tables & Interchanging Modal State Orchestration:**
    - **Problem Solved:** Standard scaffolded applications force users to abandon their current form and navigate away to a separate page whenever a required foreign key entry is missing.
    - **Zero Context Loss:** When a missing relational entry is encountered, HCOM spawns a secondary modal layer directly over the active workflow without triggering page reloads or discarding in-progress inputs.
-   - **Seamless Return:** Once the dependent entity is saved, control immediately returns to the primary form with the newly created foreign key populated.
+   - **Seamless Return:** Once the dependent entity is saved, control immediately returns to the primary form with the newly created foreign key populated but not auto-selected for the end-user.
    - **Pure C# Orchestration:** Inter-modal events and component swapping are handled entirely via C# event callbacks and layout state control.
 
 4. **Data Presentation Layer:**
