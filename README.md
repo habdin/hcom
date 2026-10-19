@@ -167,7 +167,7 @@ HCOM is designed to eventually support **full healthcare operations**, including
 ### Running the Blazor SPA
 1. Clone the repository:
    ```bash
-   git clone [https://github.com/habdin/hcom.git](https://github.com/habdin/hcom.git)
+   git clone https://github.com/habdin/hcom.git
    cd hcom/src/blazor-hcom
 2. Build and Run the application:
    ```bash
