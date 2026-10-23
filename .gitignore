@@ -6,4 +6,3 @@ venv/
 **/*.pyc
 **/bin/
 **/obj/
-**/wwwroot/lib/
