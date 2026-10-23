@@ -169,10 +169,15 @@ HCOM is designed to eventually support **full healthcare operations**, including
    ```bash
    git clone https://github.com/habdin/hcom.git
    cd hcom/src/blazor-hcom
-2. Build and Run the application:
+
+2. Apply EF Migrations before running the project:
+   ```bash
+   dotnet ef database update
+      
+3. Build and Run the application:
    ```bash
    dotnet run
-3. View the running application in the browser:
+4. View the running application in the browser:
    Open you browser and navigate to [](localhost:5008) or the console output URL.
 
 ### Running Unit and integration tests
